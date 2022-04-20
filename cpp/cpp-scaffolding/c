@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+BUILD_TYPE="Debug"
+CONFIG=0
+VERBOSE=0
+
+function usage() {
+  echo "../b -r                     -- configure build env"
+  echo "../b -b <All|Debug|Release> -- build"
+  exit 1
+}
+
+while getopts vhb:r flag
+do
+  case "${flag}" in
+    h)
+      usage
+      ;;
+    r)
+      CONFIG=1
+      ;;
+    v)
+      VERBOSE=1
+      ;;
+    b)
+      case "${OPTARG}" in
+        All)
+          BUILD_TYPE="Debug Release"
+          ;;
+        Debug)
+          BUILD_TYPE="Debug"
+          ;;
+        Release)
+          BUILD_TYPE="Release"
+          ;;
+        :)
+          echo "-b requests an argument"
+          usage
+          ;;
+      esac
+      ;;
+  esac
+done
+
+function configure() {
+  for b in $@
+  do
+    local D=build-$b
+    [ -d $D ] || mkdir $D
+
+    cd $D
+    conan install .. -b missing -pr default -s build_type=${b}
+    cmake .. -GNinja -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${b}
+    cd -
+  done
+}
+
+function build() {
+  for b in ${@}
+  do
+    local D=build-$b
+    [ ! -d "$D" ] && echo "$D doesn't exist" && exit 1
+
+    cd $D
+    if [ "$VERBOSE" == "1" ]
+    then
+      cmake --build . --config ${b} -v
+    else
+      cmake --build . --config ${b}
+    fi
+    cd -
+  done
+}
+
+[ "$CONFIG" == "1" ] && configure $BUILD_TYPE && exit 0
+[ "$BUILD_TYPE" != "" ] && build $BUILD_TYPE && exit 0
+

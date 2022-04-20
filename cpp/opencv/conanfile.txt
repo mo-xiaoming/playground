@@ -1,0 +1,12 @@
+[requires]
+spdlog/1.8.1
+opencv/4.5.1
+cxxopts/2.2.1
+
+[options]
+opencv:contrib=True
+cxxopts:unicode=True
+
+[generators]
+cmake_find_package
+cmake_paths

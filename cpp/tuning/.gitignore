@@ -1,0 +1,7 @@
+build/
+.clangd/
+.vscode/
+*.swp
+perf.data*
+.clang-tidy
+.clang-format

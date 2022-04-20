@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostnames-deployment
+spec:
+  selector:
+    matchLabels:
+      app: hello
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+      - name: hostname-app-1
+        image: 192.168.0.13:5000/skelix/hostname-app:1
+        ports:
+        - containerPort: 9001
+          #      nodeSelector:
+          #        storageType: ssd
+        livenessProbe:
+          httpGet:
+            path: /hello
+            port: 9001
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /hello
+            port: 9001
+          initialDelaySeconds: 15
+          periodSeconds: 3

@@ -1,0 +1,12 @@
+[requires]
+spdlog/1.8.0
+catch2/2.13.1
+uwebsockets/18.3.0
+uvw/2.6.0
+abseil/20200225.2
+fmt/7.0.3
+libuv/1.38.1
+
+[generators]
+cmake_find_package
+cmake_paths

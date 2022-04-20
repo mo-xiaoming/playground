@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostname-pod
+  labels:
+    app: hostname-pod-label
+    tier: dev
+spec:
+  containers:
+  - name: hostname-container-name
+    image: 192.168.0.13:5000/skelix/hostname-app:1

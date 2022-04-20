@@ -1,0 +1,26 @@
+cpp
+	buffer20	A Buffers Library for C++20: Part 1
+	duffs_device	C++ duffs device Jason Tunner
+	explicit_inst	template explicit instantiation, for mock objects
+	msan		build clang/gtest memory sanitizer
+	singleton	pre-cpp-presentation singleton
+	template	C++ folder templates
+	try			catch2 + varies c++ libs
+	try_gtests	gtest examples + conan
+	clang-tidy-stroustrup-style.diff clang-tidy readibility naming patch
+	snippets
+		variadic_templates	sum and production in meta programming or constexpr?
+		cmp_bgm.py			sum google benchmark result
+		is_class_or_union	concepts
+
+dockers
+
+impatient_java java8 for impatents
+
+notes
+
+pmr	std::pmr::*
+
+spring
+
+rabbitmq python exmaples

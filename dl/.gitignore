@@ -1,0 +1,11 @@
+data/
+.DS_Store
+labelImg/
+*_model/
+darknet/
+.ipynb_checkpoints/
+
+face_detection.caffemodel
+face_detection.prototxt
+frozen_graph.pb
+frozen_graph.pbtxt

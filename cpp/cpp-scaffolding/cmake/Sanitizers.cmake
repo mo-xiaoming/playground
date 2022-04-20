@@ -1,0 +1,61 @@
+option(ENABLE_MEMCHECK_VALGRIND "Enable memcheck with valgrind" OFF)
+if(ENABLE_MEMCHECK_VALGRIND)
+    find_program(MEMORYCHECK_COMMAND NAMES valgrind)
+    if(MEMORYCHECK_COMMAND)
+        set(MEMORYCHECK_COMMAND_OPTIONS "--trace-origin=yes --leak-check=full --trace-children=full")
+        add_custom_target(
+            memcheck
+            COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --test-action memcheck
+            COMMAND cat "${CMAKE_BINARY_DIR}/Testing/Temporary/MemoryChecker.*.log")
+        message(STATUS "Found ${MEMORYCHECK_COMMAND}")
+    else()
+        message(SEND_ERROR "valgrind requested but executable not found")
+    endif()
+endif()
+
+function(enable_sanitizers project_name)
+    set(SANITIZERS "")
+
+    option(ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
+    if(CMAKE_BUILD_TYPE STREQUAL Debug)
+        set(ENABLE_SANITIZER_ADDRESS ON)
+    endif()
+    if(ENABLE_SANITIZER_ADDRESS)
+        list(APPEND SANITIZERS "address")
+    endif()
+
+    option(ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
+    if(ENABLE_SANITIZER_MEMORY)
+        list(APPEND SANITIZERS "memory")
+    endif()
+
+    option(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR "Enable undefined behavior sanitizer" OFF)
+    if(CMAKE_BUILD_TYPE STREQUAL Debug)
+        set(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR ON)
+    endif()
+    if(ENABLE_SANITIZER_UNDEFINED_BEHAVIOR)
+        list(APPEND SANITIZERS "undefined")
+    endif()
+
+    option(ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
+    if(ENABLE_SANITIZER_THREAD)
+        list(APPEND SANITIZERS "thread")
+    endif()
+
+    list(JOIN SANITIZERS "," LIST_OF_SANITIZERS)
+
+    if(LIST_OF_SANITIZERS)
+        if(NOT "${LIST_OF_SANITIZERS}" STREQUAL "")
+            target_compile_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
+            target_link_libraries(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
+        endif()
+    endif()
+endfunction()
+
+function(enable_coverage project_name)
+    option(ENABLE_COVERAGE "Enable coverage reporting" OFF)
+    if(ENABLE_COVERAGE)
+        target_compile_options(${project_name} PRIVATE --coverage -O0 -g)
+        target_link_libraries(${project_name} PRIVATE --coverage)
+    endif()
+endfunction()

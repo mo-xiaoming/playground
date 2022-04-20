@@ -1,0 +1,9 @@
+.cache/
+tags
+compile_commands.json
+*.swp
+*.o
+parser.cpp
+parser.hpp
+tokens.cpp
+parser

@@ -1,0 +1,1 @@
+../../nix/pkgs/hs-shell.nix

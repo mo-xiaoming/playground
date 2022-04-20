@@ -1,0 +1,10 @@
+find_package(spdlog REQUIRED)
+add_executable(cpp-template main.cpp)
+target_link_libraries(cpp-template PRIVATE dft_prj_cfg spdlog::spdlog)
+
+find_package(Catch2 REQUIRED)
+add_executable(cpp-template_test main_test.cpp)
+target_link_libraries(cpp-template_test PRIVATE dft_prj_cfg Catch2::Catch2)
+include(CTest)
+include(Catch)
+catch_discover_tests(cpp-template_test)

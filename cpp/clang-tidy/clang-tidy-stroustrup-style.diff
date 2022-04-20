@@ -1,0 +1,65 @@
+diff --git a/clang-tools-extra/clang-tidy/readability/IdentifierNamingCheck.cpp b/clang-tools-extra/clang-tidy/readability/IdentifierNamingCheck.cpp
+index c2a32474b2a..84d9cce4e26 100644
+--- a/clang-tools-extra/clang-tidy/readability/IdentifierNamingCheck.cpp
++++ b/clang-tools-extra/clang-tidy/readability/IdentifierNamingCheck.cpp
+@@ -44,7 +44,9 @@ OptionEnumMapping<
+           {readability::IdentifierNamingCheck::CT_CamelSnakeCase,
+            "Camel_Snake_Case"},
+           {readability::IdentifierNamingCheck::CT_CamelSnakeBack,
+-           "camel_Snake_Back"}};
++           "camel_Snake_Back"},
++          {readability::IdentifierNamingCheck::CT_StroustrupStyle,
++           "Stroustrup_style"}};
+   return llvm::makeArrayRef(Mapping);
+ }
+ 
+@@ -188,6 +190,7 @@ static bool matchesStyle(StringRef Name,
+       llvm::Regex("^[A-Z][a-zA-Z0-9]*$"),
+       llvm::Regex("^[A-Z]([a-z0-9]*(_[A-Z])?)*"),
+       llvm::Regex("^[a-z]([a-z0-9]*(_[A-Z])?)*"),
++      llvm::Regex("^[A-Z][a-z0-9]*(_[a-z0-9]+)*$"),
+   };
+ 
+   if (!Name.consume_front(Style.Prefix))
+@@ -298,6 +301,17 @@ static std::string fixupWithCase(StringRef Name,
+       Fixup += Word.substr(1).lower();
+     }
+     break;
++  case IdentifierNamingCheck::CT_StroustrupStyle:
++    for (auto const &Word : Words) {
++      if (&Word != &Words.front()) {
++        Fixup += "_";
++        Fixup += tolower(Word.front());
++      } else {
++        Fixup += toupper(Word.front());
++      }
++      Fixup += Word.substr(1).lower();
++    }
++    break;
+   }
+ 
+   return Fixup.str().str();
+diff --git a/clang-tools-extra/clang-tidy/readability/IdentifierNamingCheck.h b/clang-tools-extra/clang-tidy/readability/IdentifierNamingCheck.h
+index ad1c582d100..56141011126 100644
+--- a/clang-tools-extra/clang-tidy/readability/IdentifierNamingCheck.h
++++ b/clang-tools-extra/clang-tidy/readability/IdentifierNamingCheck.h
+@@ -21,7 +21,8 @@ namespace readability {
+ /// Checks for identifiers naming style mismatch.
+ ///
+ /// This check will try to enforce coding guidelines on the identifiers naming.
+-/// It supports `lower_case`, `UPPER_CASE`, `camelBack` and `CamelCase` casing
++/// It supports `lower_case`, `UPPER_CASE`, `camelBack`, `CamelCase`,
++/// `Camel_Snake_Case`, `camel_Snake_Back` and `Stroustrup_style` casing
+ /// and tries to convert from one to another if a mismatch is detected.
+ ///
+ /// It also supports a fixed prefix and suffix that will be prepended or
+@@ -45,7 +46,8 @@ public:
+     CT_UpperCase,
+     CT_CamelCase,
+     CT_CamelSnakeCase,
+-    CT_CamelSnakeBack
++    CT_CamelSnakeBack,
++    CT_StroustrupStyle
+   };
+ 
+   struct NamingStyle {

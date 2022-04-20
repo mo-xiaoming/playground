@@ -1,0 +1,6 @@
+.vscode/
+.clangd/
+build/
+*.swp
+compile_commands.json
+Testing/

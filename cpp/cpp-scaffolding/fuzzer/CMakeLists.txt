@@ -1,0 +1,7 @@
+if(CMAKE_CXX_COMPILER_ID MATCHES ".*CLANG")
+  add_executable(fuzzer fuzzer.cpp)
+  target_link_libraries(fuzzer PRIVATE dft_prj_cfg CONAN_PKG::fmt -coverage -fsanitize=fuzzer,undefined,address)
+  target_compile_options(fuzzer PRIVATE -fsanitize=fuzzer,undefined,address)
+else()
+  message(WARNING "only clang support -fsanitize=fuzzer, fuzzer disabled")
+endif()

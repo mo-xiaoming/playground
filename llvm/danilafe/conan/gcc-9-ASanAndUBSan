@@ -1,0 +1,16 @@
+[settings]
+os=Linux
+os_build=Linux
+arch=x86_64
+arch_build=x86_64
+compiler=gcc
+compiler.version=9
+compiler.libcxx=libstdc++11
+build_type=ASanAndUBSan
+[options]
+[build_requires]
+[env]
+CXXFLAGS=-fsanitize=address,undefined -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -O1 -ggdb3 -fno-omit-frame-pointer -fno-inline -fno-sanitize-recover=all
+CFLAGS=-fsanitize=address,undefined -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -O1 -ggdb3 -fno-omit-frame-pointer -fno-inline -fno-sanitize-recover=all
+CXX=g++-9
+CC=gcc-9

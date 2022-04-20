@@ -1,0 +1,159 @@
+```cpp
+#include <arpa/inet.h>
+#include <linux/if_packet.h>
+#include <linux/ip.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <netinet/ether.h>
+#include <netinet/udp.h>
+
+static uint8_t const DATA[] = {
+/*Ethernet Header*/
+        0xdc, 0x38, 0xe1, 0x57, 0x15, 0x80,  /*DST MAC*/
+        0xa0, 0x36, 0x9f, 0x5f, 0xb3, 0x3a,  /*SRC MAC*/
+        0x08, 0x00,                          /*EtherType*/
+/*IP Header*/
+        0x45, 0x00,                          /*length: 20*/
+        0x01, 0x48,                          /*IP header + data: 328 */
+        0xbb, 0xb6,                          /*ID*/
+        0x40, 0x00,                          /*Flag: Don't Fragment*/
+        0x40, 0x11,                          /*TTL: 0x40, Protocol: IPv4*/
+        0x3b, 0x40,                          /*Checksum for IP Header*/
+        0x0a, 0xc6, 0x1b, 0x04,              /*SRC IP*/
+        0x0a, 0xe4, 0x12, 0x01,              /*DST IP*/
+/*UDP Header*/
+        0x00, 0x44,                          /*SRC Port*/
+        0x00, 0x43,                          /*DST Port*/
+        0x01, 0x34,                          /*UDP header + data: 300 */
+        0x43, 0xf4,                          /*Checksum*/
+/*DHCP DICOVER*/
+        0x01, 0x01,                          /*REQUEST, Ethernet*/
+        0x06, 0x00,                          /*6-byte HW, 0 Hop Count*/
+        0x00, 0x00, 0x00, 0x06,              /*Transaction ID*/
+        0x00, 0x00,                          /*secs*/
+        0x80, 0x00,                          /*broadcasting*/
+        0x00, 0x00, 0x00, 0x00,              /*Client IP Address*/
+        0x00, 0x00, 0x00, 0x00,              /*Your IP Address*/
+        0x00, 0x00, 0x00, 0x00,              /*Server IP Address*/
+        0x00, 0x00, 0x00, 0x00,              /*Gateway IP Adress*/
+        0x0a, 0x78, 0x9f, 0x39, 0x64, 0xdc, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, /*Client HW Address*/
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, /*Server Name*/
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, /*Boot Filename*/
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x63, 0x82, 0x53, 0x63, 0x35, 0x01,  /*Magic Number*/
+        0x01, 0xff,                          /*Options*/
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+static const char IFName[] = "eth3.905";
+static const uint8_t DHOST_MAC[] = {0xdc, 0x38, 0xe1, 0x57, 0x15, 0x80};
+
+static void get_if_idx(struct ifreq *if_idx, int sockfd) {
+        strncpy(if_idx->ifr_name, IFName, strlen(IFName)+1);
+        if (ioctl(sockfd, SIOCGIFINDEX, if_idx) < 0) perror("SIOCGIFINDEX");
+}
+
+
+static void get_if_mac(struct ifreq *if_mac, int sockfd) {
+        strncpy(if_mac->ifr_name, IFName, strlen(IFName)+1);
+        if (ioctl(sockfd, SIOCGIFHWADDR, if_mac) < 0) perror("SIOCGIFHWADDR");
+}
+
+
+static void fill_eh_hdr_src_dst_mac(struct ether_header *eh, int sockfd) {
+        struct ifreq if_mac = {0};
+        get_if_mac(&if_mac, sockfd);
+        for (int i=0; i<6; ++i) {
+                eh->ether_shost[i] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[i];
+                eh->ether_dhost[i] = DHOST_MAC[i];
+        }
+}
+
+static void fill_eh_hdr(struct ether_header *eh, int sockfd) {
+        fill_eh_hdr_src_dst_mac(eh, sockfd);
+        eh->ether_type = htons(ETH_P_IP);
+}
+
+static void fill_ip_hdr(struct iphdr *iph, int socket) {
+        (void)socket;
+        iph->version = 4;
+        iph->ihl = 5;
+        iph->id = htons(0xabcd);
+        iph->ttl = 0x40;
+        iph->protocol = 0x11;
+        iph->saddr = inet_addr("10.198.27.4");
+        iph->daddr = inet_addr("10.228.18.1");
+}
+
+static void fill_udp_hdr(struct udphdr *udph, int socket) {
+        (void)socket;
+        udph->source = htons(67); // RELAY
+        udph->dest = htons(67);
+}
+
+uint16_t cs(uint16_t *iph) {
+        uint32_t sum = 0;
+        for (int i=0; i<sizeof(struct iphdr)/2; ++i) sum += iph[i];
+        sum -= iph[5];
+        sum = (sum >> 16) + (sum & 0xffff);
+        return (uint16_t)(~sum);
+}
+
+int main(void) {
+        int sockfd;
+        if ((sockfd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW)) == -1) perror("socket");
+
+        uint8_t sendbuf[512] = {0};
+
+        struct ether_header *eh = (struct ether_header *) sendbuf;
+        fill_eh_hdr(eh, sockfd);
+
+        struct iphdr *iph = (struct iphdr *) (sendbuf + sizeof(struct ether_header));
+        fill_ip_hdr(iph, sockfd);
+
+        struct udphdr *udph = (struct udphdr *) (sendbuf + sizeof(struct iphdr) + sizeof(struct ether_header));
+        fill_udp_hdr(udph, sockfd);
+
+        int tx_len = sizeof(struct ether_header) + sizeof(struct iphdr) + sizeof(struct udphdr);
+        for (size_t i=42; i<sizeof(DATA); ++i) sendbuf[tx_len++] = DATA[i];
+#if 1 /* RELAY */
+        uint8_t *dhcp = sendbuf + 42;
+        dhcp[3] = 0x01;
+        dhcp[24] = 10;
+        dhcp[25] = 198;
+        dhcp[26] = 27;
+        dhcp[27] = 4;
+#endif  
+
+        udph->len = htons(tx_len - sizeof(struct ether_header) - sizeof(struct iphdr));
+        iph->tot_len = htons(tx_len - sizeof(struct ether_header));
+        iph->check = cs((unsigned short *)(sendbuf+sizeof(struct ether_header)));
+
+        struct sockaddr_ll socket_address = {0};
+        struct ifreq if_idx = {0};
+        get_if_idx(&if_idx, sockfd);
+        socket_address.sll_ifindex = if_idx.ifr_ifindex;
+        socket_address.sll_halen = ETH_ALEN;
+        for (int i=0; i<6; ++i) socket_address.sll_addr[i] = DHOST_MAC[i];
+
+        if (sendto(sockfd, sendbuf, tx_len, 0, (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0) printf("Send failed\n");
+
+        return 0;
+}
+

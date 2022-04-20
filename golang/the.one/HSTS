@@ -1,0 +1,5 @@
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+This header can only be set over an HTTPS connection, and instructs compatible browsers to **only** access the site over HTTPS for the next year(31,536,000 seconds = 1 year). This is the most common max-age value, used by nearly half of all HTTPS servers.
+
+After this HSTS policy has been applied, even if a user manually prefixes the site's hostname with _http://_, the browser will ignore this and access the site over HTTPS instead.

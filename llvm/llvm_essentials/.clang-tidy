@@ -1,0 +1,2 @@
+---
+Checks: '*,-llvmlibc-*,-darwin-*,-android-*,-fuchsia-*,-objc-*,-zircon-*,-abseil-*,-linuxkernel-*,-modernize-use-trailing-return-type,-readability-convert-member-functions-to-static,-google-runtime-references,-cppcoreguidelines-pro-bounds-constant-array-index,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-google-runtime-int,-cppcoreguidelines-pro-bounds-pointer-arithmetic'

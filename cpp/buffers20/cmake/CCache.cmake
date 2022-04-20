@@ -1,0 +1,7 @@
+find_program(CCACHE_COMMAND NAMES ccache)
+if(CCACHE_COMMAND)
+	set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_COMMAND})
+	message(STATUS "Found ccache")
+else()
+	message(WARNING "ccache not found")
+endif()

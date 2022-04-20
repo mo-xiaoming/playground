@@ -1,0 +1,34 @@
+#!/usr/bin/bash
+
+set -eou pipefail
+
+function build() {
+  local CONFIGURATION=$1
+  local COMPILER_ID=gcc
+  local BUILD_DIR=build-${COMPILER_ID}-${CONFIGURATION}
+  local COMPILER_VERSION=9
+  local CXX_COMPILER=g++-${COMPILER_VERSION}
+  local C_COMPILER=gcc-${COMPILER_VERSION}
+  local LLVM_DIR=$HOME/llvm-12.0.1/install-${COMPILER_ID}-${CONFIGURATION}/lib/cmake/llvm
+
+  if [ ! -d $LLVM_DIR ]; then
+    echo "$LLVM_DIR doesn't exist" && exit 1
+  fi
+
+  if [ ! -d $BUILD_DIR ]; then
+    mkdir $BUILD_DIR
+    cd $BUILD_DIR
+    conan install .. -b missing -s build_type=$CONFIGURATION -pr ../conan/${COMPILER_ID}-${COMPILER_VERSION}-${CONFIGURATION}
+    LLVM_DIR=${LLVM_DIR} CC=${C_COMPILER} CXX=${CXX_COMPILER} cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -GNinja -DCMAKE_BUILD_TYPE=${CONFIGURATION}
+  else
+    cd $BUILD_DIR
+  fi
+
+  cmake --build . -v
+}
+
+for c in "$@"; do
+  echo "----------------- $c ------------------"
+  build $c
+  ASAN_SYMBOLIZER_PATH=/usr/bin/llvm-symbolizer ASAN_OPTIONS=strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:use_odr_indicator=1 UBSAN_OPTIONS=print_stacktrace=1 ctest --output-on-failure
+done

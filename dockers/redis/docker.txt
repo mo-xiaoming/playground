@@ -1,0 +1,8 @@
+docker run --name my-redis -v $PWD/data:/data -d redis redis-server --appendonly yes
+
+docker run --name my-redis -v $PWD/redis.conf:/usr/local/etc/redis/redis.conf -v $PWD/data:/data -d redis redis-server /usr/local/etc/redis/redis.conf --appendonly yes
+
+docker run -it --link my-redis:redis --rm localhost:5000/skelix/redis:latest redis-cli -h redis
+
+https://hub.docker.com/r/redislabs/rejson/
+

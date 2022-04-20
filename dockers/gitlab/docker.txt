@@ -1,0 +1,22 @@
+export GITLAB_HOME=$PWD/gitlab
+docker run --detach \
+  --hostname gitlab.skelix.net \
+  --publish localhost:30443:443 --publish localhost:30080:80 --publish localhost:30022:22 \
+  --name gitlab \
+  --restart always \
+  --volume $GITLAB_HOME/config:/etc/gitlab \
+  --volume $GITLAB_HOME/logs:/var/log/gitlab \
+  --volume $GITLAB_HOME/data:/var/opt/gitlab \
+  gitlab/gitlab-se:latest
+
+# update
+
+docker stop gitlab
+docker rm gitlab
+docker pull gitlab/gitlab-ce:latest
+
+docker exec -it gitlab bash
+
+docker restart gitlab
+
+

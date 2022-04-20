@@ -1,0 +1,4 @@
+---
+Checks:          '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-llvm-*'
+HeaderFilterRegex: '.*'
+

@@ -1,0 +1,14 @@
+[settings]
+os=Linux
+os_build=Linux
+arch=x86_64
+arch_build=x86_64
+compiler=clang
+compiler.version=10
+[options]
+[build_requires]
+[env]
+CXXFLAGS=-O0 -ggdb3 -fno-omit-frame-pointer -fno-inline -fno-sanitize-recover=all
+CFLAGS=-O0 -ggdb3 -fno-omit-frame-pointer -fno-inline -fno-sanitize-recover=all
+CXX=clang++-10
+CC=clang-10

@@ -1,0 +1,9 @@
+compile_commands.json
+build/
+build_address/
+build_thread/
+build_coverage/
+.clangd/
+*.swp
+Testing/
+cmake-build-*/

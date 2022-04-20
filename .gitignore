@@ -1,0 +1,15 @@
+tags
+.idea/
+.cache/
+*.swp
+a.out
+a.out.*/
+*.o
+dockers/gitlab/gitlab/
+dockers/teamcity/
+dockers/docker-registry/
+env/
+.mvn/
+GeoLite2-City.mmdb
+.DS_Store
+yolo-mask-detection/
