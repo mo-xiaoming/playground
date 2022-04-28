@@ -1376,36 +1376,218 @@
       ```
   - type safe type erasure, but cannot do SSO
   - get type by comparing typeid(T)
-CppCon 2019 - Barath Kannan “Generalised Double Dispatch”-nNqiBasCab4.mp4
-CppCon 2019 - Ben Deane “Everyday Efficiency - In-Place Construction (Back to Basics)”-oTMSgI1XjF8.mp4
-CppCon 2019 - Chandler Carruth “There Are No Zero-cost Abstractions”-rHIkrotSwcc.mp4
-CppCon 2019 - Chandler Carruth, Titus Winters “What is C++”-LJh5QCV4wDg.mp4
+[E] CppCon 2019 - Barath Kannan “Generalised Double Dispatch”-nNqiBasCab4.mp4
+  - something like std::visit, recursive template inheritance
+[E] CppCon 2019 - Ben Deane “Everyday Efficiency - In-Place Construction (Back to Basics)”-oTMSgI1XjF8.mp4
+  - move is not free
+  - RVO
+      ```cpp
+      S no_rvo(bool b) {
+        S s{1};
+        return b ? s : S{0}; // lvalue, wrong type, not even a move, copying
+      }
+
+      S yes_rvo(bool b) {
+        return b ? get_s() : S{0};
+      }
+      ```
+[E] CppCon 2019 - Chandler Carruth “There Are No Zero-cost Abstractions”-rHIkrotSwcc.mp4
+  - single cpp file takes >15m to compile
+  - unique_ptr as parameter, passing by value, not reference
+[E] CppCon 2019 - Chandler Carruth, Titus Winters “What is C++”-LJh5QCV4wDg.mp4
+  - "...almost no c++ programmers are *totally* shure how c++ works, and the ones which are entirely confident seem to be mostly the ones who are also demonstrably wrong about it"
 [E] CppCon 2019 - Conor Hoekstra “Algorithm Intuition (part 1 of 2)”-pUEnO6SvAMo.mp4
 [E] CppCon 2019 - Conor Hoekstra, “Algorithm Intuition (part 2 of 2)”-sEvYmb3eKsw.mp4
 [D] CppCon 2019 - Craig Scott “Deep CMake for Library Authors”-m0DwB4OvDXk.mp4
-CppCon 2019 - Dan Saks “Back to Basics - Const as a Promise”-NZtr93iL3R0.mp4
-CppCon 2019 - Jason Turner “C++ Code Smells”-f_tLQl0wLUM.mp4
-CppCon 2019 - Jon Kalb “Back to Basics - Object-Oriented Programming”-32tDTD9UJCE.mp4
-CppCon 2019 - Marshall Clow “std - -midpoint How Hard Could it Be”-sBtAGxBh-XI.mp4
-CppCon 2019 - Mathieu Ropert “Crowd Review”-_W4pX_k1AAQ.mp4
-CppCon 2019 - Miro Knejp “Non-conforming C++ - the Secrets the Committee Is Hiding From You”-IAdLwUXRUvg.mp4
-CppCon 2019 - Nicolai Josuttis “When C++ Style Guides Contradict”-WRQ1xqYBKgc.mp4
-CppCon 2019 - Peter Bindels & Sy Brand 'Hello World From Scratch'-4V9QWHjRPMc.mp4
-CppCon 2019 - Phil Nash “Keep Your Friends under control”-vPXZxQm-2-0.mp4
+[D] CppCon 2019 - Dan Saks “Back to Basics - Const as a Promise”-NZtr93iL3R0.mp4
+[E] CppCon 2019 - Jason Turner “C++ Code Smells”-f_tLQl0wLUM.mp4
+[E] CppCon 2019 - Jon Kalb “Back to Basics - Object-Oriented Programming”-32tDTD9UJCE.mp4
+  1. make every class in your hierarchy either a base-only or leaf-only
+  2. make bases
+    1. abstract
+    2. protected assignment operators
+  3. make leaf classes
+    1. concrete
+    2. public assignment operators
+    3. final
+  - NVI: consider make virtual functions nonpublic, and public functions nonvirtual
+[E] CppCon 2019 - Marshall Clow “std - -midpoint How Hard Could it Be”-sBtAGxBh-XI.mp4
+[E] CppCon 2019 - Mathieu Ropert “Crowd Review”-_W4pX_k1AAQ.mp4
+  - "cannot do worse than this guy"
+[E] CppCon 2019 - Miro Knejp “Non-conforming C++ - the Secrets the Committee Is Hiding From You”-IAdLwUXRUvg.mp4
+  - case ranges: `case '0' ... '9':`
+  - the elvis operator: expr1 ? expr1 : expr2 -> expr1?:expr2
+  - designated array initializers
+      ```cpp
+      enum color { red, green, blue };
+      constexpr string_view color_name[] = { [green] = "green", [red] = "red", [blue] = "blue" };
+      constexpr uint32_t    color_value[] = { [blue] = 0xff0000, [red] = 0x0000ff, [green] = 0x00ff00 };
+      ```
+  - flexible array member, DON'T USE placement array new
+      ```cpp
+      struct header { int size; thing some; };
+
+      constexpr size_t x = (sizeof(header) + alignof(double) -1) / alignof(double) * alignof(double);
+      byte* buffer = new byte[x + n * sizeof(double)];
+      header* p = new(buffer) header{n};
+
+      // there is a non-negative UNSPECIFED overhead in all array new-expressions
+      // placement overhead may vary from one invocation of new to another
+      new(buffer + x) double[n]; // overwriten header struct
+      // should use
+      uninitialized_default_construct_n(reinterpret_cast<double*>(buffer + x), n);
+
+      double* data = reinterpret_cast<double*>(buffer + x);
+      // can't do this
+      // because p pointers to one thing, not an array
+      double* data = reinterpret_cast<double*>(reinterpret_cast<byte*>(p) + x);
+
+      // UB because data is not an array, just an pointer, so [1] and [2] don't work
+      data[0] = data[1] + data[2];
+      ```
+      ```cpp
+      struct header {
+        int size;
+        double data[];
+        ~header() { destroy_n(data, n); }
+      };
+
+      size_t bytes = sizeof(header) + n*sizeof(double);
+      byte* buffer = new byte[bytes];
+      header* p = new(buffer) header{n};
+      uninitialized_default_construct_n(p->data, n);
+
+      p->data[0] = p->data[1] + p->data[2];
+
+      p->~header();
+      delete[] reinterpret_cast<byte*>(p);
+      ```
+  - computed goto; makes lua up to 41% faster, cpython 1x% faster
+      ```cpp
+      auto run(bytecode const* instructions) {
+        constexpr void* labels[] = {
+          [bytecode::add1] = &&add1_label,
+          [bytecode::add2] = &&add2_label,
+          //...
+        };
+
+        auto const next = [&] { reutrn labels[*instructions++]; };
+
+        auto value = 0;
+        goto* next();
+
+      add1_label:
+        value += 1.0;
+        goto* next();
+      add2_label:
+        value += 2.0;
+        goto* next();
+      //...
+      halt_label:
+        return value;
+      ```
+[E] CppCon 2019 - Nicolai Josuttis “When C++ Style Guides Contradict”-WRQ1xqYBKgc.mp4
+  - don't use .h, use .hpp for headers
+  - use {} for initalization
+  - hidden friend
+  - virtual, override, final, exactly one(!)
+      ```cpp
+      class A {
+        virtual std::string getId() const final; // have both virtual and final to guarantee
+        // it will not be overwitten by subclasses
+        // and it will be inlined by compiler as the top level function, won't be in vtable
+      };
+      ```
+    - either all member functions or none are virtual
+[D] CppCon 2019 - Peter Bindels & Sy Brand 'Hello World From Scratch'-4V9QWHjRPMc.mp4
+[E] CppCon 2019 - Phil Nash “Keep Your Friends under control”-vPXZxQm-2-0.mp4
+  - make friend function inline disables ADL, because technically it is not in the same namespace as the class
+      ```cpp
+      namespace Animals {
+        class Badger {
+          int size = 42;
+          friend badgerSize(Badger const& badger) {
+            std::cout << badger.size << '\n';
+          }
+        };
+      }
+      Animals::Badger b;
+      badgerSize(b);
+      Animals::badgerSize(b); // doesn't work anymore
+      ```
+  - remove error messages, because compiler will not look into a class if the class type is not involved
 [A] CppCon 2019 - Rainer Grimm “Atomics, Locks, and Tasks (part 1 of 2)”-o0i2fc0Keo8.mp4
 [A] CppCon 2019 - Rainer Grimm “Atomics, Locks, and Tasks (part 2 of 2)”-_eaB69ta_ig.mp4
-CppCon 2019 - Rian Quinn 'Using Freestanding C++ for C++17 in Shellcode, UEFI, Embedded & Unikernels'-bKPN-CGhEC0.mp4
+[D] CppCon 2019 - Rian Quinn 'Using Freestanding C++ for C++17 in Shellcode, UEFI, Embedded & Unikernels'-bKPN-CGhEC0.mp4
 [A] CppCon 2019 - Samy Al Bahra, Paul Khuong “Abusing Your Memory Model for Fun and Profit”-N07tM7xWF1U.mp4
-CppCon 2019 - Titus Winters “Maintainability and Refactoring Impact of Higher-Level Design Features”-v_yzLe-wnfk.mp4
-CppCon 2019 -Ben Saks “Back to Basics - Understanding Value Categories”-XS2JddPq7GQ.mp4
-CppCon2014 - Hyrum Wright 'Large-Scale Refactoring @ Google'-ZpvvmvITOrk.mp4
-Crazy Code, Crazy Coders - Walter E. Brown - Closing Keynote Meeting C++ 2019-OAmWHmwlMwI.mp4
-Daniel Penning - The hidden risks in off target testing - Meeting Embedded 2020-P5dqztrG7iA.mp4
-Data Orientation For The Win! - Eduardo Madrid - CppCon 2021-PQ3WLuT01y4.mp4
-Declarative thinking, declarative practice - Kevlin Henney - Meeting C++ 2017-1s-BGBA8Nqo.mp4
-Design Idioms from an Alternate Universe - Ivan Čukić - CppCon 2021-nw20sMc3LD0.mp4
-Design Patterns for Handling_Reporting Errors in C++ - Parallel Algorithms & Executors -Mark Hoemmen-DpLZ4pnrx0o.mp4
-Dynamic Polymorphism With Code Injection and Metaclasses - Sy Brand [ ACCU 2021 ]-r14-lYalR6c.mp4
+[D] CppCon 2019 - Titus Winters “Maintainability and Refactoring Impact of Higher-Level Design Features”-v_yzLe-wnfk.mp4
+  - `using` for replacing old types, like `template <typename T> using MyVector = std::vector<T>;`
+[D] CppCon 2019 -Ben Saks “Back to Basics - Understanding Value Categories”-XS2JddPq7GQ.mp4
+[D] CppCon2014 - Hyrum Wright 'Large-Scale Refactoring @ Google'-ZpvvmvITOrk.mp4
+  - clang tools
+[E] Crazy Code, Crazy Coders - Walter E. Brown - Closing Keynote Meeting C++ 2019-OAmWHmwlMwI.mp4
+  - "A computer is a stupid machine with the ability to do incredibly smart things,... while computer programmers are smart people with the ability to do incredibly stupid things." -- Bill Bryson
+  - "[W]hen you need to pay tuition and a mortgage, you are willing to put up with a certain amount of stupidity so that you can take care of your family. Once those bills are paid, your tolerance for idiocy shrinks quite a bit." - It's no big deal
+  - learning floating point numbers
+  - labmda to initialize const variables
+  - using `K!=N` instead of `K<N` in for loop
+  - using `auto&&` in range for loops
+  - whenever possbile, sum the smallest values first, to reduce risk of loss of significance
+  - no computer arithmetic is simple
+  - "Debuggin is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it" -- Brian W. Kernighan & P.J. Plauger
+  - "When I wrote this code, only God and I knew what's going on. Now only God knows."
+[D] Daniel Penning - The hidden risks in off target testing - Meeting Embedded 2020-P5dqztrG7iA.mp4
+  - different underlying types for enum on different platforms
+[D] Data Orientation For The Win! - Eduardo Madrid - CppCon 2021-PQ3WLuT01y4.mp4
+[D] Declarative thinking, declarative practice - Kevlin Henney - Meeting C++ 2017-1s-BGBA8Nqo.mp4
+[D] Design Idioms from an Alternate Universe - Ivan Čukić - CppCon 2021-nw20sMc3LD0.mp4
+  - `void set_property(type value)` to `auto with_property(object&&, type value) -> object&&`
+  - use composition over inheritance
+  - sum types -> std::variant, no invalid states
+  - `optioinal transform(... opt, ... fun) { if (!opt) return {}; return { std::invoke(fun, *opt) }; }`
+[D] Design Patterns for Handling_Reporting Errors in C++ - Parallel Algorithms & Executors -Mark Hoemmen-DpLZ4pnrx0o.mp4
+[E] Dynamic Polymorphism With Code Injection and Metaclasses - Sy Brand [ ACCU 2021 ]-r14-lYalR6c.mp4
+  - problems with inheritance
+    1. often requires dynamic allocation
+    2. ownership and nullable consideratioins
+    3. intrusive: requires modifying child classes
+    4. No more value semantics
+    5. changes semantics for algorithms and containers, because of pointers vs types
+  - clone and move on her talk
+  ```cpp
+  struct vtable {
+    void (*speak)(void *ptr);
+    void (*destroy_)(void *ptr);
+  };
+
+  template <class Concrete>
+  constexpr vtable vtable_for {
+    .speak    = [] (void* ptr) { static_cast<Concrete*>(ptr)->speak(); };
+    .destroy_ = [] (void* ptr) { static_cast<Concrete*>(ptr)->destroy_(); };
+  };
+
+  struct animal {
+    void* concrete_;
+    vtable const* vtable_;
+
+    template <typename T>
+    animal(T const& t): concrete_(new T(t)), vtable_(vtable_for<T>) {}
+
+    void speak() { vtable_->speak(t_); }
+    ~animal() { vtable_->destroy_(t_); }
+  };
+
+  struct cat { void speak(); };
+  struct dog { void speak(); };
+
+  int main() {
+    animal c = cat{};
+    c.speak();
+
+    animal d = dog{};
+    d.speak();
+  }
+  ```
 [E] Dynamically Loaded Libraries Outside the Standard - Zhihao Yuan - CppCon 2021--dxCaM4GOqs.mp4
   - dlopen etc.
   - dynamic linking vs dynamic loading
