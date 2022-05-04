@@ -257,3 +257,21 @@ impl std::str::FromStr for Money {
 
 let m = "101.3 euro"::parse::<Money>();
 ```
+
+## upset a map
+
+```rust
+enum Value<'a> {
+  Single(&'a str),
+  Multiple(Vec<&'a str>),
+}
+
+let mut data = HashMap::new();
+
+data.entry(key).and_modify(|existing: &mut Value| match existing {
+  Value::Single(prev_val) => {
+    *existing = Value::Multiple(vec![val, prev_val]);
+  },
+  Value::Multiple(vec) => vec.push(val),
+}).or_insert(Value::Single(val));
+```

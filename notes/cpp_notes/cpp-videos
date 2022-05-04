@@ -1687,29 +1687,188 @@
 
     // True solution: algorithm selection
     ```
-Engineering Distinguished Speaker Series - Howard Hinnant-vLinb2fgkHk.mp4
-Episode #62 (with Sean Parent) 'I’m Surprised You Brought up Rotate'-czHpJE3xIXc.mp4
-Even More Modern C++-ZQWg1koOKy8.mp4
+[E] Engineering Distinguished Speaker Series - Howard Hinnant-vLinb2fgkHk.mp4
+  - a special member can be
+    1. not declared: not exist
+        ```cpp
+        struct X {
+          template <typename...Args> X(Args&...args);
+          // the default ctor is not declared
+          // but can be default constructible by variadic ctor
+          // members not-declared do not participate in overload resolution
+        };
+        ```
+        ```cpp
+        struct X {
+          template <typename...Args> X(Args&...args);
+          // X() binds to the defaulted default ctor instead of the variadic ctor
+          X() = default;
+        };
+        ```
+        ```cpp
+        struct X {
+          template <typename...Args> X(Args&...args);
+          // X() fails to compile
+          // becasue deleted members participate in overload resolution
+          X() = delete;
+        };
+        ```
+    2. implicit declared: compiler generate default or delete
+    3. user declared: deleted, defaulted, user-defined
+        ```cpp
+        struct X {
+          X() {}
+          X();
+          X() = default;
+          X() = delete;
+        };
+        ```
+  - should I define one special member in terms of another? No!
+  - copy-swap idiom
+      ```cpp
+      struct S {
+        explicit S(std::size_t size) : buf_(new char[size]), size_(size) {}
+        S(S const& other) : S(other.size_) {}
+        S(S&& other) noexcept { swap(*this, other); }
+        S& operator=(S const& other) & {
+          auto t = other;
+          swap(*this, t);
+          return *this;
+        }
+        S& operator=(S&& other) & noexcept {
+          swap(*this, other);
+          return *this;
+        }
+        ~S() { delete[] buf_; }
+
+        friend void swap(S& s1, S& s2) noexcept {
+        	using std::swap;
+          swap(s1.buf_, s2.buf_);   // C.165: not using std::swap
+          swap(s1.size_, s2.size_); // to using possible ADL
+        }
+
+      private:
+        char* buf_ = nullptr;
+        std::size_t size_ = 0U;
+      };
+
+      // however, this ideom creates extra copies during copy assgining
+      // copy assignment operator should only support basic exceptioin safety
+
+      struct S {
+        S& operator=(S const& other) & {
+          if (this != &other) {
+            if (size_ < other.size_) {
+              size_ = 0U;
+              delete[] buf_;
+              buf_ = new char[other.size_];
+              size_ = other.size_;
+            }
+            std::copy(other.buf_, other.buf_ + other.size_, buf_);
+          }
+          return *this;
+        }
+      }
+
+      // and call strong_assignment(x, y) for strong exception gurantee
+      template <typename T>
+      T& strong_assign(T& dest, T src) {
+        std::swap(dest, src);
+        return dest;
+      }
+      ```
+  - In A Hurry?
+      ```cpp
+      class X {
+      public:
+        X(X const&0) = delete;
+        X& operator=(X const&) = delete;
+      };
+      ```
+  - never delete the move members. OUTDATED?
+[D] Episode #62 (with Sean Parent) 'I’m Surprised You Brought up Rotate'-czHpJE3xIXc.mp4
+[E] Even More Modern C++-ZQWg1koOKy8.mp4
+  - sort performance improvements from C to c++20
 [K] Faster, Easier, Simpler Vectors - David Stone - CppCon 2021-MfFzr9qqPDw.mp4
   - using c array instead of initializer_list
   - begin + size is faster than begin + end pair, but all stl implementations are using the later one for ABI reasons
   - static_vector vs allocator, allocator size/performance overhead, and cannot be trivial
 [A] Frictionless Allocators - Alisdair Meredith [ ACCU 2021 ]-CQj1WLOUaqw.mp4
-Future of Testing With C++20 - Kris Jusiak [ ACCU 2021 ]-KlU0cb_tbuw.mp4
-Generic Programming Without (Writing Your Own) Templates - Tina Ulbrich [ ACCU 2021 ]-KRUnZa9OBAM.mp4
-Goals for Better Code - Implement Complete Types-mYrbivnruYw.mp4
-GoingNative 2013 C++ Seasoning-W2tWOdzgXHA.mp4
+[D] Future of Testing With C++20 - Kris Jusiak [ ACCU 2021 ]-KlU0cb_tbuw.mp4
+[D] Generic Programming Without (Writing Your Own) Templates - Tina Ulbrich [ ACCU 2021 ]-KRUnZa9OBAM.mp4
+[D] Goals for Better Code - Implement Complete Types-mYrbivnruYw.mp4
+[E] GoingNative 2013 C++ Seasoning-W2tWOdzgXHA.mp4
+  - No Raw Loops
+  - that's a rotate
+      ```cpp
+      template <typename I>
+      auto slide(I f, I l, I p) -> pair<I, I> {
+        if (p < f) return { p, rotate(p, f, l) };
+        if (l < p) return { rotate(f, l, p), p };
+        return { f, l };
+      }
+
+      template <typename I, typanem S>
+      auto gather(I f, I l, I p, S s) -> pair<I, I> {
+        return {stable_partition(f, p, not1(s)),
+                stable_partition(p, l, s)};
+      }
+      ```
 [D] HandmadeCon 2015 - Mike Acton-qWJpI2adCcs.mp4
   - docs are always missing, or don't understand
   - don't be too generic, don't introduce extra things to solve problems don't exist
-Herb Sutter - Bridge to new thingia - Meeting C++ online-nhzyLY171XI.mp4
-Higher Order Functions for ordinary developers - Björn Fahller - Meeting C++ 2018-qL6zUn7iiLg.mp4
-How C++ Debuggers work - Simon Brand - Meeting C++ 2017-Q3Rm95Mk03c.mp4
+[E] Herb Sutter - Bridge to new thingia - Meeting C++ online-nhzyLY171XI.mp4
+  - If you don't build a strong backward compatibility bridge, expect to slow your adoption down by ~10 years
+  1. Value - to address known OldThing pain (and know OldThing's value).
+  2. Availability - wherever OldThing is used.
+  3. Compatiblility bridge. Seamless backward interop with OldThing.
+    - Good: "I can use NewThing side by side in an OldThing project."
+    - Grail: "I can write 1 line of NewThing inside OldThing and see benefit."
+[E] Higher Order Functions for ordinary developers - Björn Fahller - Meeting C++ 2018-qL6zUn7iiLg.mp4
+  - use auto return type to return lambdas
+      ```cpp
+      auto equals(int num) {
+        return [num] (int x) { return x == num; };
+      }
+      ```
+  - compose
+      ```cpp
+      template <typename F1, typename F2> auto compose(F1 f1, F2 f2) {
+        return [=](auto const& x) { return f1(f2(x)); };
+      }
+      ```
+  - when_all
+      ```cpp
+      template <typename...Predicates> auto when_all(Predicates ... ps) {
+        return [=](auto const& x) { return (ps(x) && ...); };
+      }
+      ```
+  - if_then
+      ```cpp
+      template <typename Predicate, typename Action>
+      auto if_then(Predicate predicate, Action action) {
+        return [=](auto&& x) {
+          if (predicate(x)) {
+            action(std::forward<decltype(x)>(x));
+          }
+        };
+      }
+      ```
+[E] How C++ Debuggers work - Simon Brand - Meeting C++ 2017-Q3Rm95Mk03c.mp4
 [K] How It's Done - Sorting Algorithms – Karol Przybylski – code - -dive 2021-7T7Yx99lbN4.mp4
   - qsort and related ones, why std::sort is better
 [D] How Profile-Guided Optimization Makes Your Code Faster Without Any Code Changes - Stephan Dollberg-3RtMMHkVsDg.mp4
-How to answer 'why will yours succeed, when X, Y, and Z have failed' - Herb Sutter [ C++ on Sea  ]-BF3qw1ObUyo.mp4
-Hypercritical C++ Code Review - Yuri Minaev [ C++ on Sea ]-f1_Iwh33f9I.mp4
+[E] Hypercritical C++ Code Review - Yuri Minaev [ C++ on Sea ]-f1_Iwh33f9I.mp4
+  - be aware of char type pointers, type aliasing slows everything down. vector<int> is faster than vector<uint8_t>. range base loop solves this
+  - memset to zero out local memory may not work
+  - proper way to do comparison, or just use <=> instead
+      ```cpp
+      bool operator<(Foo lhs, Foo rhs) {
+        if (lhs.a < rhs.a) return true;
+        if (rhs.a < rhs.a) return false;
+        return lhs.b < rhs.b;
+      }
+      ```
 [K] Implementing static_vector - How Hard Could it Be - David Stone - CppCon 2021-I8QJLGI0GOE.mp4
   - hard to impossible
   - template to get narrowest size type on compile time
@@ -1719,9 +1878,41 @@ Hypercritical C++ Code Review - Yuri Minaev [ C++ on Sea ]-f1_Iwh33f9I.mp4
   - unintialized_array<byte> has to use reinterpret_cast, which is not allowed in constexpr context
   - using SFINAE to use both kinds of storage to allow constexpr for some types
   - std::destroy_at, std::construct_at(constexpr friendly, unlike placement new), std::addressof
-Ivica Bogosavljevic - The price of dynamic memory in C_C++-E01wFA1-0YM.mp4
-Jakub Beránek - Going down the CPU microarchitecture rabbit hole-OM0AKazCNM4.mp4
-Jason Turner - Great C++ is_trivial-vrKuSSiqk9E.mp4
+[E] Ivica Bogosavljevic - The price of dynamic memory in C_C++-E01wFA1-0YM.mp4
+  - memory fragmentation
+    - as a result, malloc and free take more and more time and your program is less and less responsive
+    - a serious problem for the long-running programs and systems - it causes allocation failures and slowdowns
+    - solutions,
+      1. occasioinally restart your programs
+      2. preallocate all the needed memory at the program beginning
+      3. cache memory chunks
+      4. use special memory allocators that promise low fragmentation
+  - many many examples and statistics
+[E] Jakub Beránek - Going down the CPU microarchitecture rabbit hole-OM0AKazCNM4.mp4
+  - kobzol/hardware-effects
+  - branch prediction, processing **float** sorted array is fater than a unsorted one
+    - branch-misses: 24% vs 0.4%
+    - more predicatable data
+    - compiler hints, `__builtin_expected(cond(), 1)`, automated with PGO
+    - remove branches
+  - indirect jumps: function pointers, function return address, virtual methods
+    - for virtual methods,
+      - increate object size, more data cache misses
+      - extra indirection
+      - prevents inlining
+      - branch target mispredictions
+    - sorted array by type can be faster slightly
+  - false sharing
+  - denormal FP numbers
+    - -fast-match
+    - CPU flags
+      1. Flush-to-zero     treat denormal outputs as 0
+      2. Denormals-as-zero treat denormal inputs  as 0
+[E] Jason Turner - Great C++ is_trivial-vrKuSSiqk9E.mp4
+  - return a const value doesn't prohibit NRVO
+  - must use std::move on returning a destructure value
+  - don't return const non-ref value
+  - using user defined `throw_logic_err()` to throw exception instead of explicitly calling `throw` may help optimization, because of smaller function size, which helps inlining
 [D] KEYNOTE - What Everyone Should Know About How Amazing Compilers Are - Matt Godbolt [C++ on Sea 2019]-w0sz5WbS5AM.mp4
 Klaus Iglberger - Breaking Dependencies - Type Erasure - A Design Analysis-7GIz9SmRgyc.mp4
 Kris Jusiak - Online AVR_Arduino Developement with C++20 - Meeting Embedded 2020-MskKTIdW45c.mp4
@@ -1745,7 +1936,7 @@ Modern C++ Workshop - Design Patterns with modern C++ (Part 2)-RQyWsMspUEs.mp4
 Modern Linux C++ Debugging Tools - Under the Covers - Greg Law & Dewang Li [ ACCU 2021 ]-qYbGDDIsH4M.mp4
 [D] More Modern CMake - Deniz Bahadir - Meeting C++ 2018-y7ndUhdQuU8.mp4
 [D] Multi Threading Model in Paradox Games - Past, Present and Future - Mathieu Ropert - CppCon 2021-e_2z7uWouuk.mp4
-Multithreading 101 - Concurrency Primitives From Scratch -  Arvid Gerstmann - Meeting C++ 2019-9TVvpgHJElU.mp4
+[T] Multithreading 101 - Concurrency Primitives From Scratch -  Arvid Gerstmann - Meeting C++ 2019-9TVvpgHJElU.mp4
 Nicolai Josuttis - Let's Move - Meeting C++ 2020-sACa3Ax7YB4.mp4
 No Touchy! A Case Study of Software Architecture with Immutable Objects -  CppCon 2020-ZSrIZW2Hzhk.mp4
 Nothing is better than copy or move - Roger Orr [ACCU 2018]--dc5vqt2tgA.mp4
@@ -1757,7 +1948,7 @@ Pacific++ 2018 - Sean Parent 'Generic Programming'-iwJpxWHuZQY.mp4
 Phil Nash - Exceptional low-latency C++-EP74mSiwHXk.mp4
 Phil Nash - Oo Considered Harmful - Meeting C++ 2020--PAXVTyhB8s.mp4
 Pipes - How Plumbing Can Make Your C++ Code More Expressive - Jonathan Boccara - CppCon 2020-oYEpf5A2qrE.mp4
-Plain Threads are the GOTO of todays computing - Hartmut Kaiser - Keynote Meeting C++ 2014-4OCUEgSNIAY.mp4
+[T] Plain Threads are the GOTO of todays computing - Hartmut Kaiser - Keynote Meeting C++ 2014-4OCUEgSNIAY.mp4
 Plenary - Performance Matters - Emery Berger - CppCon 2020-koTf7u0v41o.mp4
 [A] Practical Memory Pool Based Allocators For Modern C++ - Misha Shalem - CppCon 2020-l14Zkx5OXr4.mp4
 Processing Decimal Values - Dietmar Kühl [ ACCU 2021 ]-lHZRDjzDb1M.mp4
@@ -1806,7 +1997,7 @@ Tobias Hieta - Compiling C++ is slow - let's go faster-X4pyOtawqjg.mp4
 [A] Tony van Eerd - C++ Memory Model & Lock-Free Programming-14ntPfyNaKE.mp4
 True parallelism, with no concept of threads - Alfred Bratterud - Meeting C++ 2017-9IXivbSA_5A.mp4
 Type safe C++ – LOL!  --) - Bjorn Fahller [ACCU 2018]-SWHvNvY-PHw.mp4
-Undefined Behavior is Not an Error - Barbara Geller, Ansel Sermersheim - code - -dive 2019-x-ZDZ1CcP3k.mp4
+[D] Undefined Behavior is Not an Error - Barbara Geller, Ansel Sermersheim - code - -dive 2019-x-ZDZ1CcP3k.mp4
 Understanding Compiler Optimization - Chandler Carruth - Opening Keynote Meeting C++ 2015-FnGCDLhaxKU.mp4
 [D] Unicode in C++ - James McNellis - Meeting C++ 2016-tOHnXt3Ycfo.mp4
 Using Concepts - C++ Design in a Concept World (part 1 of 2) - Jeff Garland - [CppNow 2021]-Ffu9C1BZ4-c.mp4
@@ -1814,8 +2005,8 @@ Using Concepts - C++ Design in a Concept World (part 2 of 2) - Jeff Garland - [C
 Walter E. Brown - Correctly calculating min, max and more - Meeting C++ online-V1U6AXEgNbE.mp4
 Want fast C++ Know your hardware! - Timur Doumler - Meeting C++ 2016-a12jYibw0vs.mp4
 What is an ABI, and Why is Breaking it Bad - Marshall Clow - CppCon 2020-7RoTDjLLXJQ.mp4
-Working with Asynchrony Generically - A Tour of C++ Executors (part 1_2) - Eric Niebler - CppCon 21-xLboNIf7BTg.mp4
-Working with Asynchrony Generically - A Tour of C++ Executors (part 2_2) - Eric Niebler - CppCon 21-6a0zzUBUNW4.mp4
+[T] Working with Asynchrony Generically - A Tour of C++ Executors (part 1_2) - Eric Niebler - CppCon 21-xLboNIf7BTg.mp4
+[T] Working with Asynchrony Generically - A Tour of C++ Executors (part 2_2) - Eric Niebler - CppCon 21-6a0zzUBUNW4.mp4
 Writing better embedded Software - Dan Saks - Keynote Meeting Embedded 2018-3VtGCPIoBfs.mp4
 Writing cache friendly C++ - Jonathan Müller - Meeting C++ 2018-Nz9SiF0QVKY.mp4
 [MUC++] Ben Deane - 'The Construction and Use of C++ Algorithms' (Virtual Meetup)-jCfbyjAyAKU.mp4
@@ -1837,4 +2028,4 @@ code - -dive 2017 – Mateusz Pusz – Striving for ultimate low latency-vzDl0Q9
 code - -dive 2017 – Odin Holmes – The fastest template metaprogramming in the West-ZpVPexZHYrQ.mp4
 code - -dive conference 2014 - Scott Meyers - Cpu Caches and Why You Care-WDIkqP4JbkE.mp4
 itCppCon21 Welcome (Marco Arena) + KEYNOTE 'WARNING - std - -find is broken' (Sean Parent)-NO5wHzI_oug.mp4
-std - -jthread - I Told You Concurrency Is Tricky - Nico Josuttis [ ACCU 2021 ]-ln5ERAVXEMY.mp4
+[T] std - -jthread - I Told You Concurrency Is Tricky - Nico Josuttis [ ACCU 2021 ]-ln5ERAVXEMY.mp4
