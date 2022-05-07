@@ -1914,17 +1914,71 @@
   - don't return const non-ref value
   - using user defined `throw_logic_err()` to throw exception instead of explicitly calling `throw` may help optimization, because of smaller function size, which helps inlining
 [D] KEYNOTE - What Everyone Should Know About How Amazing Compilers Are - Matt Godbolt [C++ on Sea 2019]-w0sz5WbS5AM.mp4
-Klaus Iglberger - Breaking Dependencies - Type Erasure - A Design Analysis-7GIz9SmRgyc.mp4
-Kris Jusiak - Online AVR_Arduino Developement with C++20 - Meeting Embedded 2020-MskKTIdW45c.mp4
-Lambdas - uses and abuses - Dawid Zalweski - Meeting C++ 2020-Onv9w6FGwIQ.mp4
+[D] Klaus Iglberger - Breaking Dependencies - Type Erasure - A Design Analysis-7GIz9SmRgyc.mp4
+[D] Kris Jusiak - Online AVR_Arduino Developement with C++20 - Meeting Embedded 2020-MskKTIdW45c.mp4
+  - sml lib
+[D] Lambdas - uses and abuses - Dawid Zalweski - Meeting C++ 2020-Onv9w6FGwIQ.mp4
+  - recursive lambda -> y-combinator
 [E] Lightning Talk - C++ is like Javascript - Patricia Aas [C++ on Sea 2019]-L5C4OmD79ac.mp4
 [E] Lightning Talk - So You Thought C++ Was Weird Meet Enums - Roth Michaels - CppCon 2021-SGfk5l85cko.mp4
   - enums are just named numbers
   - static_cast<E>(3) is valid for `enum E {A=0, B=1, C=2};`, as long as the underlying type can hold
-Linux User_Kernel ABI - the realities of how C and C++ programs really talk to the OS - Greg Law-4CdmGxc5BpU.mp4
-Live Compiler Development with Cross-Platform Tooling - Sy Brand [ C++ on Sea 2020 ]-Jw2n5QSul34.mp4
-Making the Most Out of Your Compiler - Danila Kutenin - CppCon 2021-lvFh1vLEcIw.mp4
-Matt Godbolt (2018-06-27) - Memory and Caches-vDns3Um39l0.mp4
+[D] Linux User_Kernel ABI - the realities of how C and C++ programs really talk to the OS - Greg Law-4CdmGxc5BpU.mp4
+  - syscalls, /proc and posix APIs
+[E] Live Compiler Development with Cross-Platform Tooling - Sy Brand [ C++ on Sea 2020 ]-Jw2n5QSul34.mp4
+  - BrainFuck
+    - < : left
+    - > : right
+    - + : increase
+    - - : decrease
+    - , : read from stdin, write to *cell
+    - . : read from *cell, write to stdout
+    - []: loop while *cell > 0
+[E] Making the Most Out of Your Compiler - Danila Kutenin - CppCon 2021-lvFh1vLEcIw.mp4
+  - LTO to increase visibility, 0~10% performance, at Google 4%
+  - LTO can be 0.?% faster than ThinLTO, but ThinLTO is good for large code base, like millions of lines of code
+  - -Ofast = -O3 + -ffast-math + some weird more(dangerous!)
+  - llvm -mpopcnt enabled only in -O3
+  - use `-O0 -g` for debugging purposes, use -O3 for optimization purposes
+  - If -O0 is too slow, then using `-O1 -f no-omit-frame-pointer -fno-optimize-sibling-calls` instead
+  - -Og works nicely only in gcc
+  - bisect optimization passes
+  - use != instead of < in loop, maybe
+  - -m related flags on different architectures
+  - generally inlining increases performance (see ThinLTO)
+  - `-mbranches-within-32B-boundaries -falign-functions=32` stablize benchmarks
+  - unstable ABI flags by -D_LIBCPP_ABI_UNSTABLE
+    - -D_LIBCPP_ABI_ENABLE_UNIQUE_PTR_TRIVIAL_ABI solves the unique_ptr passing as parameter problem that Chandler mentioned, and 2~2.5% build size win at Google if build everything from source
+  - c++20 char8_t is non-aliasing type, doesn't allow overlapping with other data, while char* can. it gives huge performance gain
+  - clang is better than gcc in almost all benchmarks
+  - cases
+    - firefox 5~7% win: move from gcc/msvc to clang; -flto; PGO; -fexperimental-new-pass-manager(default in clang-13)
+    - stockfish 3% win: -flto; -fexperimental-new-pass-manager(default in clang-13); AVX512
+    - Yandex 7% win: -msse4.2; -flto=thin; AVX/FMA dynamic dispatch on hot paths; libc++; gcc -> llvm; inline threshold 1000
+    - one trading company 4% win: gcc -> llvm; -flto=thin; -march=haswell; inline threshold 1000
+    - ClickHouse 7~10% win, 10% smaller bin size: gcc -> llvm; -O3; -msse4.2; -flto=thin; libstdc++ -> libc++; libc++ unstable ABI; char8_t; function alignment 32; inline threshold 1000
+  - google's perspective 3~5 fleet wide savings, 2-2.5% binary size win
+    - run all infra built with clang/llvm
+    - build and compile llvm from head
+    - ThinLTO for release builds, for testing no LTO
+    - PGO for highly important binaries
+    - -msse4.2, -march=haswell
+    - libstdc++ -> libc++
+[E] Matt Godbolt (2018-06-27) - Memory and Caches-vDns3Um39l0.mp4
+  - based on "What Every Programmer Should Know About Memory" by Ulrich Drepper
+  - everything about memory, from transiter to cache
+    - cache prefech won't cross page boundaries
+    - cache associative
+    - virtual memory
+    - huge pages give better performance, 15 cycles improvements
+    - NUMA
+    - make good use of cache
+      - keep data small
+      - prefer linear scans
+      - avoid chasing pointers
+    - allocate carefully
+      - allocate from right NUMA node
+      - use huge pages for giant slabs
 [D] Meeting C++ online - Andreas Reischuck - Using C++20 coroutines for asynchronous parsers-u41EhjrqdGc.mp4
 Memory-Mapped Devices as Objects - Dan Saks - CppCon 2020-uwzuAGtAEFk.mp4
 Meta Polymorphism - Jonathan Boccara - Meeting C++ 2020 Opening Keynote-mU_n_ohIHQk.mp4
@@ -2029,3 +2083,4 @@ code - -dive 2017 – Odin Holmes – The fastest template metaprogramming in th
 code - -dive conference 2014 - Scott Meyers - Cpu Caches and Why You Care-WDIkqP4JbkE.mp4
 itCppCon21 Welcome (Marco Arena) + KEYNOTE 'WARNING - std - -find is broken' (Sean Parent)-NO5wHzI_oug.mp4
 [T] std - -jthread - I Told You Concurrency Is Tricky - Nico Josuttis [ ACCU 2021 ]-ln5ERAVXEMY.mp4
+x86 Internals for Fun & Profit • Matt Godbolt • GOTO 2014 [hgcNM-6wr34].mp4
