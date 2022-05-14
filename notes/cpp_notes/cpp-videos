@@ -1980,25 +1980,118 @@
       - allocate from right NUMA node
       - use huge pages for giant slabs
 [D] Meeting C++ online - Andreas Reischuck - Using C++20 coroutines for asynchronous parsers-u41EhjrqdGc.mp4
-Memory-Mapped Devices as Objects - Dan Saks - CppCon 2020-uwzuAGtAEFk.mp4
-Meta Polymorphism - Jonathan Boccara - Meeting C++ 2020 Opening Keynote-mU_n_ohIHQk.mp4
-Mocking Framworks considered, harmful! - Peter Sommerlad [ACCU2018]-SmevUyVendA.mp4
-Modern C and What We Can Learn From It - Luca Sas [ ACCU 2021 ]-QpAhX-gsHMs.mp4
-Modern C++ Safety and Security At 20 - Matthew Butler - CppCon 2020-uccarZGpDhk.mp4
-Modern C++ Workshop - Design Patterns with modern C++ (Part 1)-6Akl4Qgoy_Q.mp4
-Modern C++ Workshop - Design Patterns with modern C++ (Part 2)-RQyWsMspUEs.mp4
-Modern Linux C++ Debugging Tools - Under the Covers - Greg Law & Dewang Li [ ACCU 2021 ]-qYbGDDIsH4M.mp4
+[D] Memory-Mapped Devices as Objects - Dan Saks - CppCon 2020-uwzuAGtAEFk.mp4
+  - if doing embeded
+[D] Meta Polymorphism - Jonathan Boccara - Meeting C++ 2020 Opening Keynote-mU_n_ohIHQk.mp4
+  - multi dispatch using templates
+  - `std::map<std::pair<const std::type_info*, const std::type_info*>, void(*)(GameObject&, GameObject&)> collisioinfunctions_`
+  - std::any for better value semantics
+      ```cpp
+      class Shape {
+      public:
+        template <typename ConcreteShape>
+        Shape(ConcreteShape&& shape)
+            : storage{std::forward<ConcreteShape>(shape)},
+            , getter{[](std::any&storage) -> IShape& { return std::any_cast<ConcreteShape&>(storage); }}
+        {}
+        IShape *operator->() { return &getter(storage); }
+      private:
+        std::any storage;
+        IShape& (*getter)(std::any&);
+      };
+
+      std::vectro<Shape> shapes;
+
+      shapes.push_back(Square{});
+      shapes.push_back(LightingBolt{});
+
+      Shape createShape() { return Square{}; }
+
+      auto shape = createShape();
+      shape->draw();
+
+      // value semantics
+      auto otherShape = shape;
+
+      // not nullable
+
+      // change Shape to Implementation to make it generic
+      template<typename Interface>
+      class Implementation {};
+
+      using Shape = Implementation<IShape>;
+      ```
+[D] Mocking Framworks considered, harmful! - Peter Sommerlad [ACCU2018]-SmevUyVendA.mp4
+[E] Modern C and What We Can Learn From It - Luca Sas [ ACCU 2021 ]-QpAhX-gsHMs.mp4
+[D] Modern C++ Safety and Security At 20 - Matthew Butler - CppCon 2020-uccarZGpDhk.mp4
+[D] Modern C++ Workshop - Design Patterns with modern C++ (Part 1)-6Akl4Qgoy_Q.mp4
+  - singleton is worse than global variable
+[D] Modern C++ Workshop - Design Patterns with modern C++ (Part 2)-RQyWsMspUEs.mp4
+  - First Rule: DO NOT USE THREADS and other low-level faciities! You'll get it wrong!
+[E] Modern Linux C++ Debugging Tools - Under the Covers - Greg Law & Dewang Li [ ACCU 2021 ]-qYbGDDIsH4M.mp4
 [D] More Modern CMake - Deniz Bahadir - Meeting C++ 2018-y7ndUhdQuU8.mp4
 [D] Multi Threading Model in Paradox Games - Past, Present and Future - Mathieu Ropert - CppCon 2021-e_2z7uWouuk.mp4
 [T] Multithreading 101 - Concurrency Primitives From Scratch -  Arvid Gerstmann - Meeting C++ 2019-9TVvpgHJElU.mp4
-Nicolai Josuttis - Let's Move - Meeting C++ 2020-sACa3Ax7YB4.mp4
-No Touchy! A Case Study of Software Architecture with Immutable Objects -  CppCon 2020-ZSrIZW2Hzhk.mp4
-Nothing is better than copy or move - Roger Orr [ACCU 2018]--dc5vqt2tgA.mp4
+[D] Nicolai Josuttis - Let's Move - Meeting C++ 2020-sACa3Ax7YB4.mp4
+    ```cpp
+    std::string        getValue()      && { return value; } // should it be std::move(value) ?
+    const std::string& getValue() const&  { return value; }
+    ```
+[T] No Touchy! A Case Study of Software Architecture with Immutable Objects -  CppCon 2020-ZSrIZW2Hzhk.mp4
+[D] Nothing is better than copy or move - Roger Orr [ACCU 2018]--dc5vqt2tgA.mp4
 [D] Oh No! More Modern CMake - Deniz Bahadir - Meeting C++ 2019-y9kSr5enrSk.mp4
-On 'simple' Optimizations - Chandler Carruth - Secret Lightning Talks - Meeting C++ 2016-s4wnuiCwTGU.mp4
-Optimising a small real-world C++ application - Hubert Matthews [ACCU 2019]-fDlE93hs_-U.mp4
-Pacific++ 2017 - Jason Turner 'Rethinking Exceptions'-OkgvqjJzH_Y.mp4
-Pacific++ 2018 - Sean Parent 'Generic Programming'-iwJpxWHuZQY.mp4
+[D] On 'simple' Optimizations - Chandler Carruth - Secret Lightning Talks - Meeting C++ 2016-s4wnuiCwTGU.mp4
+  - vector::reserve is important
+[E] Optimising a small real-world C++ application - Hubert Matthews [ACCU 2019]-fDlE93hs_-U.mp4
+  1. Find unecessary calls and operations
+  2. Find malloc or memcpy dominates
+  3. Try different algorithms or caching result
+  4. Memory bandwidth issues
+  ```bash
+  g++ -O3 -march=native -g a.cpp
+
+  # default memory leak checker
+  valgrind ./a.out
+
+  # cache and branch-prediction profiler
+  valgrind --tool=cachegrind --branch-sim=yes --cache-sim=yes --cachegrind-out-file=chg.out ./a.out
+
+  # annotate souce file with cache and branch information
+  cg_annotate chg.out $PWD/a.out # and auto=yes with libs info
+
+  # call graph simulator and branch prediction emulator
+  valgrind --tool=callgrind --branch-sim=yes --cacheuse=yes --callgrind-out-file=clg.out ./a.out
+
+  # annotate source file with cache and branch information
+  callgrind_annotate clg.out a.out | grep -v /usr/bin/callgrind_annotate
+
+  # get how many system calls and how long they took
+  strace -c ./a.out
+
+  perf stat ./a.out
+  # 2.04 insn per cycle # low, haswell can do about 6 # most app is 0.7
+  # 0.14 stalled cycles per insn # waiting 0.14 cycles for memory
+  ```
+  - boost::mapped_file
+[E] Pacific++ 2017 - Jason Turner 'Rethinking Exceptions'-OkgvqjJzH_Y.mp4
+  - why not exceptions?
+    - can bloat binary size, which affects cache utilization
+    - handling exceptions can be much slower(~60x) than not
+    - exceptions are even slower when executing inside a debugger that reports on them
+    - the compiler cannot elide or optimize out exceptions
+  - why exceptions?
+    - thread safe with no additional work
+    - carry context and additional information
+    - work perfectly with RVO/NRVO copy and move elision
+    - normal, no-exception cases have fewer conditionals and more straightforward logic
+    - fewer conditionals are more optimizable and more readable
+    - impossible to ignore
+  - throwing in a noexcept context calls std::terminate, which is implementation defined wheter to unwind
+  - search linearly on array may be slower than set, even on small data set
+  - lambda with a name should consider using noexcept
+  - perf gain from noexcept is almost none
+  - noexcept make thinking what code is doing
+[D] Pacific++ 2018 - Sean Parent 'Generic Programming'-iwJpxWHuZQY.mp4
 Phil Nash - Exceptional low-latency C++-EP74mSiwHXk.mp4
 Phil Nash - Oo Considered Harmful - Meeting C++ 2020--PAXVTyhB8s.mp4
 Pipes - How Plumbing Can Make Your C++ Code More Expressive - Jonathan Boccara - CppCon 2020-oYEpf5A2qrE.mp4
@@ -2025,7 +2118,7 @@ Slow Coding - Ben Deane; A View to a Thing - Jason Turner - 2020-10-11-lDZmXpsKt
 Strong Types in C++ - Barney Dellar [C++ on Sea 2019]-fWcnp7Bulc8.mp4
 Strong types for strong interfaces - Jonathan Boccara - Meeting C++ 2017-WVleZqzTw2k.mp4
 Structure and Interpretation of Test Cases - Kevlin Henney [ C++ on Sea 2020 ]-RX6WvaxmIyY.mp4
-Taming Dynamic Memory - An Introduction to Custom Allocators - Andreas Weis [ACCU 2019]-IGtKstxNe14.mp4
+[A] Taming Dynamic Memory - An Introduction to Custom Allocators - Andreas Weis [ACCU 2019]-IGtKstxNe14.mp4
 Template Metaprogramming - Type Traits (part 1 of 2) - Jody Hagins - CppCon 2020-tiAVWcjIF6o.mp4
 Template Metaprogramming - Type Traits (part 2 of 2) - Jody Hagins - CppCon 2020-dLZcocFOb5Q.mp4
 Test Driven C++ - Phil Nash - CppCon 2020-N2gTxeIHMP0.mp4
@@ -2045,7 +2138,7 @@ The lazy programmer's guide to writing thousands of tests - Scott Wlaschin-IYzDF
 Things that Matter - Scott Meyers _ DConf2017-RT46MpK39rQ.mp4
 This Videogame Developer Used the STL and You'll Never Guess What Happened - Mathieu Ropert - ACCU21-xoEUO9DezV8.mp4
 Threads Considered Harmful - Lucian Radu Teodorescu [ ACCU 2021 ]-_T1XjxXNSCs.mp4
-Timur Doumler - How C++20 changes the way we write code - Meeting C++ 2020-VK-16tpFQVI.mp4
+[D] Timur Doumler - How C++20 changes the way we write code - Meeting C++ 2020-VK-16tpFQVI.mp4
 Timur Doumler - Type punning in modern C++-Nn7zugKc32Q.mp4
 Tobias Hieta - Compiling C++ is slow - let's go faster-X4pyOtawqjg.mp4
 [A] Tony van Eerd - C++ Memory Model & Lock-Free Programming-14ntPfyNaKE.mp4
@@ -2058,13 +2151,13 @@ Using Concepts - C++ Design in a Concept World (part 1 of 2) - Jeff Garland - [C
 Using Concepts - C++ Design in a Concept World (part 2 of 2) - Jeff Garland - [CppNow 2021]-IXbf5lxGtr0.mp4
 Walter E. Brown - Correctly calculating min, max and more - Meeting C++ online-V1U6AXEgNbE.mp4
 Want fast C++ Know your hardware! - Timur Doumler - Meeting C++ 2016-a12jYibw0vs.mp4
-What is an ABI, and Why is Breaking it Bad - Marshall Clow - CppCon 2020-7RoTDjLLXJQ.mp4
+[E] What is an ABI, and Why is Breaking it Bad - Marshall Clow - CppCon 2020-7RoTDjLLXJQ.mp4
 [T] Working with Asynchrony Generically - A Tour of C++ Executors (part 1_2) - Eric Niebler - CppCon 21-xLboNIf7BTg.mp4
 [T] Working with Asynchrony Generically - A Tour of C++ Executors (part 2_2) - Eric Niebler - CppCon 21-6a0zzUBUNW4.mp4
 Writing better embedded Software - Dan Saks - Keynote Meeting Embedded 2018-3VtGCPIoBfs.mp4
 Writing cache friendly C++ - Jonathan Müller - Meeting C++ 2018-Nz9SiF0QVKY.mp4
 [MUC++] Ben Deane - 'The Construction and Use of C++ Algorithms' (Virtual Meetup)-jCfbyjAyAKU.mp4
-[MUC++] Inbal Levi - 'Exceptions Under the Spotlight' (Virtual)-7mQBfl2K-5Y.mp4
+[D] [MUC++] Inbal Levi - 'Exceptions Under the Spotlight' (Virtual)-7mQBfl2K-5Y.mp4
 [MUC++] Jonathan Müller - 'The Static Initialization Order Fiasco' (Virtual Meetup)-dlTrziwQU-w.mp4
 [MUC++] Jonathan O'Connor - Template Shenanigans - Testing, Debugging and Benchmarking Template Code-TQQf4z-laBA.mp4
 [MUC++] Nicolai Josuttis - 'The Nightmare of Initialization in C++'-MTzUvmREiu0.mp4
