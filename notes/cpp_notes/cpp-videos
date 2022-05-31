@@ -1546,6 +1546,14 @@
   - sum types -> std::variant, no invalid states
   - `optioinal transform(... opt, ... fun) { if (!opt) return {}; return { std::invoke(fun, *opt) }; }`
 [D] Design Patterns for Handling_Reporting Errors in C++ - Parallel Algorithms & Executors -Mark Hoemmen-DpLZ4pnrx0o.mp4
+[D] Don't Help the Compiler [AKtHxKJRwp4].mp4
+  - const non-ref return signature prohibits moving when passing as a rvalue param
+      ```cpp
+      const std::string foo();
+      void bar(std::string&&);
+      bar(foo()); // copy
+      ```
+  - using std::plus<> etc. for transparent operations
 [E] Dynamic Polymorphism With Code Injection and Metaclasses - Sy Brand [ ACCU 2021 ]-r14-lYalR6c.mp4
   - problems with inheritance
     1. often requires dynamic allocation
@@ -1793,6 +1801,7 @@
   - using c array instead of initializer_list
   - begin + size is faster than begin + end pair, but all stl implementations are using the later one for ABI reasons
   - static_vector vs allocator, allocator size/performance overhead, and cannot be trivial
+[D] Kevlin Henney - Functional C++ [CIg6eyJv4dk].mp4
 [A] Frictionless Allocators - Alisdair Meredith [ ACCU 2021 ]-CQj1WLOUaqw.mp4
 [D] Future of Testing With C++20 - Kris Jusiak [ ACCU 2021 ]-KlU0cb_tbuw.mp4
 [D] Generic Programming Without (Writing Your Own) Templates - Tina Ulbrich [ ACCU 2021 ]-KRUnZa9OBAM.mp4
@@ -2086,44 +2095,201 @@
     - normal, no-exception cases have fewer conditionals and more straightforward logic
     - fewer conditionals are more optimizable and more readable
     - impossible to ignore
-  - throwing in a noexcept context calls std::terminate, which is implementation defined wheter to unwind
+  - throwing in a noexcept context calls std::terminate, which is implementation defined whether to unwind
   - search linearly on array may be slower than set, even on small data set
   - lambda with a name should consider using noexcept
   - perf gain from noexcept is almost none
   - noexcept make thinking what code is doing
 [D] Pacific++ 2018 - Sean Parent 'Generic Programming'-iwJpxWHuZQY.mp4
-Phil Nash - Exceptional low-latency C++-EP74mSiwHXk.mp4
-Phil Nash - Oo Considered Harmful - Meeting C++ 2020--PAXVTyhB8s.mp4
-Pipes - How Plumbing Can Make Your C++ Code More Expressive - Jonathan Boccara - CppCon 2020-oYEpf5A2qrE.mp4
+[D] Phil Nash - Exceptional low-latency C++-EP74mSiwHXk.mp4
+  - exception can be 100 times slower than returning value
+[D] Phil Nash - Oo Considered Harmful - Meeting C++ 2020--PAXVTyhB8s.mp4
+  - OO history
+[D] Pipes - How Plumbing Can Make Your C++ Code More Expressive - Jonathan Boccara - CppCon 2020-oYEpf5A2qrE.mp4
 [T] Plain Threads are the GOTO of todays computing - Hartmut Kaiser - Keynote Meeting C++ 2014-4OCUEgSNIAY.mp4
-Plenary - Performance Matters - Emery Berger - CppCon 2020-koTf7u0v41o.mp4
+[E] Plenary - Performance Matters - Emery Berger - CppCon 2020-koTf7u0v41o.mp4
+  - layout biases measurement -- Mytkowicz et al. (ASPLOS'09), 40% difference
+    - link order -change function addresses
+    - environment variable size - moves the program stack
+  - use randomization to eliminate the effect of layout which enables sound performance evaluation
+  - statistics: p-value, variance, a-nova
+  - virtual speedup to find performance graph
+  - measure thoughput
+  - latency: Little's law = latency = transactions / throughput
+  - coz-profiler
 [A] Practical Memory Pool Based Allocators For Modern C++ - Misha Shalem - CppCon 2020-l14Zkx5OXr4.mp4
-Processing Decimal Values - Dietmar Kühl [ ACCU 2021 ]-lHZRDjzDb1M.mp4
-Programming Conversations Lecture 5 part 1-IzNtM038JuI.mp4
-Programming Conversations Lecture 5 part 2-vxv74Mjt9_0.mp4
-Programming with GUTs by Kevlin Henney-azoucC_fwzw.mp4
-Rethinking the Way We Do Templates in C++ - Mateusz Pusz [ ACCU 2021 ]-IN3FgJCeXdc.mp4
+[E] Processing Decimal Values - Dietmar Kühl [ ACCU 2021 ]-lHZRDjzDb1M.mp4
+  - floating number problem
+  - how to eliminate errors, multiplication instead of division, bdldfp::Decimal64
+  - serialization
+[D] Programming Conversations Lecture 5 part 1-IzNtM038JuI.mp4
+  - following story from Going Native, google shut his down because nobody knows what rotate does
+  - no raw for loops
+  - projection is google in algo
+[D] Programming Conversations Lecture 5 part 2-vxv74Mjt9_0.mp4
+  - no raw synchronization primitives, because you most likely get it wrong
+[D] Programming with GUTs by Kevlin Henney-azoucC_fwzw.mp4
+[D] Rethinking the Way We Do Templates in C++ - Mateusz Pusz [ ACCU 2021 ]-IN3FgJCeXdc.mp4
+  - using `struct S : template1, template2 {};` to avoid long error type messages
 [A] Richard Kaiser - C++17 Polymorphic Memory Resources and STL Containers for Embedded Applications-Ju41sGwE88w.mp4
-Safe and Sane C++ Types - Peter Sommerlad [ACCU 2019]-93RT8TgTshA.mp4
-Scott Meyers - The evolving search for effective C++ - Keynote @ Meeting C++ 2014-smqT9Io_bKo.mp4
-Scott Meyers – The Most Important Design Guideline-5tg1ONG18H8.mp4
-Sean Parent - Polymorphic Task - Secret Lightning Talks @ Meeting C++ 2017-2KGkcGtGVM4.mp4
-Sean Parent _ Keynote talk at C++ Russia, 2015-dr9sxBNrEGc.mp4
-Slow Coding - Ben Deane; A View to a Thing - Jason Turner - 2020-10-11-lDZmXpsKtVA.mp4
+[E] Safe and Sane C++ Types - Peter Sommerlad [ACCU 2019]-93RT8TgTshA.mp4
+  - Peter's Strong Type
+[E] Scott Meyers - The evolving search for effective C++ - Keynote @ Meeting C++ 2014-smqT9Io_bKo.mp4
+  - Effective Modern C++
+  - Effective Effective Books
+    1. keep item short
+    2. put item titles in the imperative
+    3. make item advise as specific as possible
+    4. word item titles carefully
+    5. prefer guidelines that say what to do oer what not to do
+    6 tell the truth and nothing but the truth, but no necessarily the whole truth
+    7. back items wiht solid technical arguments
+    8. end each item with a summary of its advice
+    9. know how to modulate the stridency of item titles
+    10. cross reference liberally
+    11. minimize use of footnotes
+    12. be consistent when referring to yourself and your readers
+    13. seek out ruthless pre-publication reviewers
+  - emplacement vs insertion
+    - emplace_back/emplace_front may beat push_back/push_front
+    - but no reason to expect `emplace` to normally beat `insert`, because it is assignment not construction
+    - emplacement should be used, when multiple arguments passed, type can be convert to type T
+    - emplacement for map/sets requires extra allocation
+[D] Scott Meyers – The Most Important Design Guideline-5tg1ONG18H8.mp4
+  - "make interfaces easy to use correctly and hard to use incorrectly"
+  - the principle of least astonishment
+[E] Sean Parent - Polymorphic Task - Secret Lightning Talks @ Meeting C++ 2017-2KGkcGtGVM4.mp4
+  - something is still wrong, it prints nothing
+  - in youtube commend, he mentioned this is UB, https://stlab.cc/tip/2017/12/23/small-object-optimizations.html
+    ```cpp
+    // https://godbolt.org/z/7z4nYevM4
+    #include <memory>
+    #include <type_traits>
+    #include <functional>
+
+    #include <fmt/core.h>
+
+    template <typename> class task;
+
+    template <typename R, typename ...Args>
+    class task<R(Args...)> {
+        struct concept {
+            void (*_dtor)(void*) noexcept;
+            void (*_move)(void*, void*) noexcept;
+            R (*_invoke)(void*, Args&&...);
+        };
+
+        static constexpr concept empty{._dtor = [](void*) noexcept {}, ._move = nullptr, ._invoke = nullptr};
+        const concept* _concept = &empty;
+
+        template <typename F, bool Small> struct model;
+        template <typename F> struct model<F, true> {
+            model(F&& f) : _f(std::forward<F>(f)) {}
+
+            static void _dtor(void* self) noexcept { static_cast<model*>(self)->~model(); }
+            static void _move(void* self, void* p) noexcept { new (p) model(std::move(*static_cast<model*>(self))); }
+            static R _invoke(void* self, Args&&... args) {
+                return std::invoke(static_cast<model*>(self)->_f, std::forward<Args>(args)...);
+            }
+            static constexpr concept vtable{._dtor = _dtor, ._move = _move, ._invoke = _invoke};
+
+            F _f;
+        };
+        template <typename F>
+        struct model<F, false> final {
+            template <typename G>
+            model(G&& f) : _p(std::make_unique<F>(std::forward<F>(f))) {}
+
+            static void _dtor(void* self) noexcept { static_cast<model*>(self)->~model(); }
+            static void _move(void* self, void* p) noexcept {
+                new (p) model(std::move(*static_cast<model*>(self)));
+            }
+            static R _invoke(void* self, Args&&... args) {
+                return std::invoke(*static_cast<model*>(self)->_p, std::forward<Args>(args)...);
+            }
+            static constexpr concept vtable{._dtor = _dtor, ._move = _move, ._invoke = _invoke};
+
+            std::unique_ptr<F> _p;
+        };
+
+        static constexpr std::size_t small_size = sizeof(void*) * 4;
+
+        std::aligned_storage_t<small_size> _model;
+    public:
+        template <typename F>
+        task(F&& f) {
+            constexpr bool is_small = sizeof(model<std::decay_t<F>, true>) <= small_size;
+            new (&_model) model<std::decay_t<F>, is_small>(std::forward<F>(f));
+            _concept = &model<std::decay_t<F>, is_small>::vtable;
+        }
+        ~task() { _concept->_dtor(&_model); }
+
+        task(task&& x) noexcept : _concept(x._concept) { _concept->_move(&x._model, &_model); }
+        task& operator=(task&& x) noexcept {
+            if (this == &x) return *this;
+            _concept->_dtor(&_model);
+            _concept = x._concept;
+            _concept->_move(&x._model, &_model);
+            return *this;
+        }
+
+        R operator()(Args... args) {
+            return _concept->_invoke(&_model, std::forward<Args>(args)...);
+        }
+    };
+
+    int main() {
+        task<std::unique_ptr<int>()> f = [_p = std::make_unique<int>(42)]() mutable {
+            return std::move(_p);
+        };
+        fmt::print("{}", *f());
+    }
+    ```
+[D] Sean Parent _ Keynote talk at C++ Russia, 2015-dr9sxBNrEGc.mp4
+  - there is a "same" talk
+  - no raw synchronization primitives
+  - how he got a job in apple, by not being afraid to approach other seniors
+[E] Slow Coding - Ben Deane; A View to a Thing - Jason Turner - 2020-10-11-lDZmXpsKtVA.mp4
+  - slow coding
+  - function_view is hard, because void* and function pointers are not castable
 [D] So You Think You Know How to Work With Concepts - Andrzej Krzemieński - [CppNow 2021]-IUPaAcIk1Us.mp4
 [K] std variant and the power of pattern matching - Nikolai Wuttke - Meeting C++ 2018-CELWr9roNno.mp4
   - space game, state transit
   - event handling
   - performance panelty
-Strong Types in C++ - Barney Dellar [C++ on Sea 2019]-fWcnp7Bulc8.mp4
-Strong types for strong interfaces - Jonathan Boccara - Meeting C++ 2017-WVleZqzTw2k.mp4
-Structure and Interpretation of Test Cases - Kevlin Henney [ C++ on Sea 2020 ]-RX6WvaxmIyY.mp4
+[D] Strong Types in C++ - Barney Dellar [C++ on Sea 2019]-fWcnp7Bulc8.mp4
+  - see Jonathan Boccara's talk, that's the origin of this one
+  - using Kilogram = StrongType<double, struct KilogramPhantomTag, Addable, Subtractable>
+  - a chrono like physics lib with CRTP
+  - literals
+[E] Strong types for strong interfaces - Jonathan Boccara - Meeting C++ 2017-WVleZqzTw2k.mp4
+  - strong lambdas/generic types and much more
+  - https://github.com/JoBoccara/NamedType
+[E] Structure and Interpretation of Test Cases - Kevlin Henney [ C++ on Sea 2020 ]-RX6WvaxmIyY.mp4
 [A] Taming Dynamic Memory - An Introduction to Custom Allocators - Andreas Weis [ACCU 2019]-IGtKstxNe14.mp4
-Template Metaprogramming - Type Traits (part 1 of 2) - Jody Hagins - CppCon 2020-tiAVWcjIF6o.mp4
-Template Metaprogramming - Type Traits (part 2 of 2) - Jody Hagins - CppCon 2020-dLZcocFOb5Q.mp4
-Test Driven C++ - Phil Nash - CppCon 2020-N2gTxeIHMP0.mp4
-The C++ Type System Is Your Friend - Hubert Matthews [ACCU 2017]-MCiVdu7gScs.mp4
-The C++ rvalue Lifetime Disaster - Arno Schoedl [ ACCU 2021 ]-Ubr5wIm4g7c.mp4
+[D] Template Metaprogramming - Type Traits (part 1 of 2) - Jody Hagins - CppCon 2020-tiAVWcjIF6o.mp4
+  - "For any given type T, the result of applying one of these templates to T and to cv T shall yield the same result."
+[D] Template Metaprogramming - Type Traits (part 2 of 2) - Jody Hagins - CppCon 2020-dLZcocFOb5Q.mp4
+  - "For any given type T, exactly one of the primary type categories shall yield true_type"
+[E] Test Driven C++ - Phil Nash - CppCon 2020-N2gTxeIHMP0.mp4
+[E] The C++ Type System Is Your Friend - Hubert Matthews [ACCU 2017]-MCiVdu7gScs.mp4
+  - another way to do this
+  - compile-type check because constexpr is not allow exception throwing
+  - std::rel_ops is wonderful
+      ```cpp
+      // by defining == and <
+      bool operator==(Year y1, Year y2) { return int(y1) == int(y2); }
+      bool operator<(Year y1, Year y2) { return int(y1) < int(y2); }
+
+      // then include std::rel_ops
+      #include <utility>
+      using namespace std::ops;
+
+      // we get <=, >=, > and !=
+      ```
+  - CRTP for ops
+  - policy on overflow, etc.
+[D] The C++ rvalue Lifetime Disaster - Arno Schoedl [ ACCU 2021 ]-Ubr5wIm4g7c.mp4
 The Complete Guide to `return x;` - Arthur O'Dwyer - [CppNow 2021]-OGKAJD7bmr8.mp4
 The Concepts of concepts - Sandor Dargo - [CppNow 2021]-weJD_ZCr6S8.mp4
 The Forgotten Art of Structured Programming - Kevlin Henney [C++ on Sea 2019]-SFv8Wm2HdNM.mp4
@@ -2140,32 +2306,136 @@ This Videogame Developer Used the STL and You'll Never Guess What Happened - Mat
 Threads Considered Harmful - Lucian Radu Teodorescu [ ACCU 2021 ]-_T1XjxXNSCs.mp4
 [D] Timur Doumler - How C++20 changes the way we write code - Meeting C++ 2020-VK-16tpFQVI.mp4
 Timur Doumler - Type punning in modern C++-Nn7zugKc32Q.mp4
-Tobias Hieta - Compiling C++ is slow - let's go faster-X4pyOtawqjg.mp4
+[E] Tobias Hieta - Compiling C++ is slow - let's go faster-X4pyOtawqjg.mp4
+  - 1h45m to 36m
+  - ninja for incrementable build, marginly for full build
+  - clang as compiler, 3x faster
+  - lld as linker, especially for debug build, 1x% faster
+  - PCH, `target_precompile_headers(Test PUBLIC StdAfx.h)`, 20% faster
+  - `-DCMAKE_CXX_COMPILER_LAUNCHER=ccache` result is complicated
+    - cold cache is slow
+    - hot cache can be incredibly faster
+    - to think about
+      - cache sharing(sccache)
+      - local builds vs CI
+      - hard to debug
+  - unity build, `-DCMAKE_UNITY_BUILD=ON`, 40% faster
+  - PIMPL
+  - build clang with LTO, `-DLLVM_ENABLE_LTO=Thin`, x% faster
+  - build clang with PGO, 20% faster
+    1. build clang with `-DLLVM_BUILD_INSTRUMENTED=IR`
+    2. train clang with souce code with different settings
+    3. merge all profraw files with llvm-prodata
+    4. feed output to clang cmake with `-DLLVM_PROFDATA_FILE=<path>`
+    5. combine with LTO for best results
+  - post link optimization
+    - LLVM-BOLT
+    - LLVM-Propeller
+  - grab bag
+    - `-fvisibility=hidden` should be default, which shrinks the linking table
+    - `-fexperimental-new-pass-manager`
+    - distcc
+    - `-ftime-trace`
 [A] Tony van Eerd - C++ Memory Model & Lock-Free Programming-14ntPfyNaKE.mp4
-True parallelism, with no concept of threads - Alfred Bratterud - Meeting C++ 2017-9IXivbSA_5A.mp4
-Type safe C++ – LOL!  --) - Bjorn Fahller [ACCU 2018]-SWHvNvY-PHw.mp4
+[T] True parallelism, with no concept of threads - Alfred Bratterud - Meeting C++ 2017-9IXivbSA_5A.mp4
+[D] Type safe C++ – LOL!  --) - Bjorn Fahller [ACCU 2018]-SWHvNvY-PHw.mp4
+  - "Did you just slice an orange into an apple?" -- Peter Bindels
+      ```cpp
+      enum class Orange{};
+      enum class Apple{};
+
+      int main() {
+        Orange o{4};
+        Apple a{3};
+        Apple x{o}; // Oops
+      }
+      ```
+  - compare different strong type libs
 [D] Undefined Behavior is Not an Error - Barbara Geller, Ansel Sermersheim - code - -dive 2019-x-ZDZ1CcP3k.mp4
-Understanding Compiler Optimization - Chandler Carruth - Opening Keynote Meeting C++ 2015-FnGCDLhaxKU.mp4
+[E] Understanding Compiler Optimization - Chandler Carruth - Opening Keynote Meeting C++ 2015-FnGCDLhaxKU.mp4
+  - inlining is the single most important optimization in modern compilers
 [D] Unicode in C++ - James McNellis - Meeting C++ 2016-tOHnXt3Ycfo.mp4
-Using Concepts - C++ Design in a Concept World (part 1 of 2) - Jeff Garland - [CppNow 2021]-Ffu9C1BZ4-c.mp4
-Using Concepts - C++ Design in a Concept World (part 2 of 2) - Jeff Garland - [CppNow 2021]-IXbf5lxGtr0.mp4
-Walter E. Brown - Correctly calculating min, max and more - Meeting C++ online-V1U6AXEgNbE.mp4
-Want fast C++ Know your hardware! - Timur Doumler - Meeting C++ 2016-a12jYibw0vs.mp4
+[E] Using Concepts - C++ Design in a Concept World (part 1 of 2) - Jeff Garland - [CppNow 2021]-Ffu9C1BZ4-c.mp4
+[E] Using Concepts - C++ Design in a Concept World (part 2 of 2) - Jeff Garland - [CppNow 2021]-IXbf5lxGtr0.mp4
+[E] Walter E. Brown - Correctly calculating min, max and more - Meeting C++ online-V1U6AXEgNbE.mp4
+  - [alg.sorting.general]/5: A sequence is _sorted_ if, for every iterator i and non-negative integer n, *(i + n) < *i is false
+  - given two values a and b, in that order:
+    - min should prefer to return a, and
+    - max should prefer to return b
+  - never should max and min return the same item
+    - when values a and b are in     order, min should return a / max should return b
+    - when values a and b are out of order, min should return b / max should return a
+  - we should always prefer algorithmic _stability_
+      ```cpp
+      auto min(auto a, auto b) { return out_of_order(a, b) ? b : a; }
+      auto max(auto a, auto b) { return out_of_order(a, b) ? a : b; }
+      bool out_of_order(auto a, auto b) { return b < a; }
+      ```
+  - floating points comparison
+[D] Want fast C++ Know your hardware! - Timur Doumler - Meeting C++ 2016-a12jYibw0vs.mp4
+  - cache associativity
+    - 128KB L2 cache and 8 way associativity
+    - 8 sets, 16KB per set
+    - say have 20 ints but they are all 16KB apart
+    - so each int only can go one slot of each set
+    - that's 20 ints for 8 slots
+  - align data for SSE vectorization
 [E] What is an ABI, and Why is Breaking it Bad - Marshall Clow - CppCon 2020-7RoTDjLLXJQ.mp4
+[E] Why C++ Sails When the Vasa Sank [ltCgzYcpFUI].mp4
+  - compatible with C
+  - single most importand features: Destructors. Then templates and overloading. A language for library writers
+  - "The reason that c++ is complicated is because you're all sick"
 [T] Working with Asynchrony Generically - A Tour of C++ Executors (part 1_2) - Eric Niebler - CppCon 21-xLboNIf7BTg.mp4
 [T] Working with Asynchrony Generically - A Tour of C++ Executors (part 2_2) - Eric Niebler - CppCon 21-6a0zzUBUNW4.mp4
-Writing better embedded Software - Dan Saks - Keynote Meeting Embedded 2018-3VtGCPIoBfs.mp4
-Writing cache friendly C++ - Jonathan Müller - Meeting C++ 2018-Nz9SiF0QVKY.mp4
-[MUC++] Ben Deane - 'The Construction and Use of C++ Algorithms' (Virtual Meetup)-jCfbyjAyAKU.mp4
+[D] Writing better embedded Software - Dan Saks - Keynote Meeting Embedded 2018-3VtGCPIoBfs.mp4
+[D] Writing cache friendly C++ - Jonathan Müller - Meeting C++ 2018-Nz9SiF0QVKY.mp4
+  - sizeof(T) % alignof(T) == 0
+  - https://github.com/foonathan/tiny
+[E] [MUC++] Ben Deane - 'The Construction and Use of C++ Algorithms' (Virtual Meetup)-jCfbyjAyAKU.mp4
+    ```cpp
+    template <typename InputIt1, typename InputIt2, typename OutputIt>
+    OutputIt zip(InputIt1 first1, InputIt1 last1, InputIt2 first2, OutputIt d_first) {
+      return std::transform(first1, last1, first2, d_first, [](const auto& a, const auto& b) { return std::pair(a, b); });
+    }
+
+    bool starts_with(const std::string& s, const std::string_view prefix) {
+      return std::mismatch(std::cbegin(s), std::cend(s), std::cbegin(prefix), std::cend(prefix), std::equal_to{}).second == std::cend(prefix);
+    }
+    ```
+  - find one of the missing values in an unsorted int64 array
+      ```cpp
+      template<std::forward_iterator I, typename T = std::iter_value_t<I>>
+      constexpr T min_unused(I first, I last, T value) {
+        using diff_t = decltype(value - value);
+        while (first != last) {
+          const auto half = (std::distance(first, last) + 1) / 2;
+          const auto m = value + diff_t(half);
+          const auto p = std::partition(first, last, [&](const auto x) { return x < m; });
+          if (p == std::next(first, half)) {
+            first = p;
+            value = m;
+          } else {
+            last = p;
+          }
+        }
+        return value;
+      }
+  - std::invoke can call member functions, so no f(args..), but std::invoke(f, args..)?
+  - four algorithmic principles
+    1. useful returns: a procedure should return all the potentially useful information it computed
+    2. separating types: do not assume that two types are the same when they my be different
+    3. completeness: when designing an interface, consider providing all the related procedures
+    4. itnerface refinement: design interfaces, like designing programs, is a multi-pass activity
 [D] [MUC++] Inbal Levi - 'Exceptions Under the Spotlight' (Virtual)-7mQBfl2K-5Y.mp4
-[MUC++] Jonathan Müller - 'The Static Initialization Order Fiasco' (Virtual Meetup)-dlTrziwQU-w.mp4
-[MUC++] Jonathan O'Connor - Template Shenanigans - Testing, Debugging and Benchmarking Template Code-TQQf4z-laBA.mp4
-[MUC++] Nicolai Josuttis - 'The Nightmare of Initialization in C++'-MTzUvmREiu0.mp4
-[MUC++] Phil Nash - 'Test Driven C++' (Part 1)-MqNqi_OvnXA.mp4
-[MUC++] Phil Nash - 'Test Driven C++' (Part 2)-OZFhRjzaC0o.mp4
+[D] [MUC++] Jonathan Müller - 'The Static Initialization Order Fiasco' (Virtual Meetup)-dlTrziwQU-w.mp4
+[D] [MUC++] Jonathan O'Connor - Template Shenanigans - Testing, Debugging and Benchmarking Template Code-TQQf4z-laBA.mp4
+[E] [MUC++] Nicolai Josuttis - 'The Nightmare of Initialization in C++'-MTzUvmREiu0.mp4
+[D] [MUC++] Phil Nash - 'Test Driven C++' (Part 1)-MqNqi_OvnXA.mp4
+[D] [MUC++] Phil Nash - 'Test Driven C++' (Part 2)-OZFhRjzaC0o.mp4
 [D] [MUC++] Sándor Dargó - Strongly typed containers-QXE43Zqr_WM.mp4
-[MUC++] Timur Doumler - Real-time Programming with the C++ Standard Library-G3qOKiPf1WQ.f299.mp4
-[noise filtered] Optimizing Generic Algorithms - Denis Yaroshevskiy - Meeting C++ 2019-10MQW-aJU3g.mp4
+[D] [MUC++] Timur Doumler - Real-time Programming with the C++ Standard Library-G3qOKiPf1WQ.mp4
+[E] [noise filtered] Optimizing Generic Algorithms - Denis Yaroshevskiy - Meeting C++ 2019-10MQW-aJU3g.mp4
+ - same code, but 4.2x performance difference due to code alignment
 code - -dive 2016 conference – Chandler Carruth – Making C++ easier, faster and safer (part 1)-cX_GhJ6BuWI.mp4
 code - -dive 2016 conference – Chandler Carruth – Panel-style extended Q&A _ AmA-430o2HMODj4.mp4
 code - -dive 2016 conference – Chandler Carruth –Making C++ easier, faster, safer (part 2)-E36BUcTWo50.mp4
@@ -2177,3 +2447,14 @@ code - -dive conference 2014 - Scott Meyers - Cpu Caches and Why You Care-WDIkqP
 itCppCon21 Welcome (Marco Arena) + KEYNOTE 'WARNING - std - -find is broken' (Sean Parent)-NO5wHzI_oug.mp4
 [T] std - -jthread - I Told You Concurrency Is Tricky - Nico Josuttis [ ACCU 2021 ]-ln5ERAVXEMY.mp4
 x86 Internals for Fun & Profit • Matt Godbolt • GOTO 2014 [hgcNM-6wr34].mp4
+
+Rafal Dittwald, “Data Oriented Programming” [8Kc55qOgGps].mp4
+Things I Learnt While Trying to Avoid Becoming a CMake Expert - CB Bailey - ACCU 2022 [852VSXFaDO0].mp4
+C++20 Concepts - Andreas Fertig - ACCU 2022 [XOMv4VilN50].mp4
+SonarSource - The Power of Clean Code - Geoffray Adde & Olivier Gaudin - ACCU 2022 [IZcKDkW0I94].mp4
+A lock-free std - -atomic std - -shared_ptr - Timur Doumler - ACCU 2022 [a10JpqI-CvU].mp4
+A Friendly Introduction to Rust for C++ Developers - Hendrik Niemeyer - ACCU 2022 [o-k3xgV0oBE].mp4
+Embracing User-Defined Literals Safely - Pablo Halpern - ACCU 2022 [_nW2iB6_BAU].mp4
+The Worst Best Practices - Jason Turner - [CppNow 2021] [KeI03tv9EKE].mp4
+C++20 - The Small Pearls - Rainer Grimm - ACCU 2022 [OLRXMgXtprQ].mp4
+Equal Rights for Tests - Jon Jagger - ACCU 2022 [9lXFuf5IN7Q].mp4
