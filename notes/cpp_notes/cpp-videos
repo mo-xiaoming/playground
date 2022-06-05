@@ -14,6 +14,7 @@
   - setter/getter and move and hidden friend for a simple Customer class
   - value categories, universal reference
   - style guides
+[E] A Low-Latency Library in FPGA Hardware for High-Frequency Trading [nXFcM1pGOIE].mp4
 [T] A Multi-threaded, Transaction-Based Locking Strategy for Containers - Bob Steagall - CppCon 2020-Pi243hGxDyA.mp4
 [E] A Possible Future of Software Development-4moyKUHApq4.mp4
   - Binary search problem for interviews and more
@@ -21,6 +22,9 @@
   - Math <-> Programming
   - DAG
 [M] A Relaxed Guide to memory_order_relaxed - Paul E. McKenney & Hans Boehm - CppCon 2020-cWkUqK71DZ0.mp4
+[T] A lock-free std - -atomic std - -shared_ptr - Timur Doumler - ACCU 2022 [a10JpqI-CvU].mp4
+  - atomic<shared_ptr> is not lock free, correct his mistake on _CppCon 2015: Timur Doumler "C++ in the Audio Industry"_
+  - correct his another mistake on _Lock-free programming wiht modern C++ - Timur Doumler [ACCU 2017]_
 [D] A refresher on the floating-point computations and the standard library. - Boguslaw Cyganek-7aZbYJ5UTC8.mp4
 [T] Adventures in SIMD-Thinking (part 1 of 2) - Bob Steagall - CppCon 2020-qejTqnxQRcw.mp4
 [T] Adventures in SIMD-Thinking (part 2 of 2) - Bob Steagall - CppCon 2020-qXleSwCCEvY.mp4
@@ -103,7 +107,6 @@
   - assignment operators should be ref qualified by `&` to prevent assigning to a temporary
   - DesDeMovA (Rule of Destructor defined Deleted Move Assignment)
   - Scoped Manager
-
     ```cpp
     class T {
       Resource resource;
@@ -175,11 +178,15 @@
   - tick-tock messageing hierarchy, from inheritence to concept
 [K] C++20 Concepts - A Day in the Life - Saar Raz - CppCon 2019-qawSiMIXtE4.mp4
   - inheritence tick-tock messaging -> compile time concept
+[E] C++20 Concepts - Andreas Fertig - ACCU 2022 [XOMv4VilN50].mp4
+  - practical usage
+  - simplify std::optional with concept
 [K] C++20 Ranges in Practice - Tristan Brindle - CppCon 2020-d_E-VLyUnzc.mp4
   - borrowed_range / dangling iterator
 [D] C++20 STL Features - One Year of Development on GitHub - Stephan T. Lavavej - CppCon 2020-8kjRx8vo6y4.mp4
   - cmp_less / in_range
   - constexpr for static_assert(is_sorted)
+[D] C++20 - The Small Pearls - Rainer Grimm - ACCU 2022 [OLRXMgXtprQ].mp4
 [D] C++Now 2017 - Bryce Lelbach “Multidimensional Iterators”-EVGenON6p9g.mp4
 [D] C++Now 2017 - Daniel Pfeifer “Effective CMake'-bsXLMQ6WgIk.mp4
 [K] C++Now 2017 - Jason Turner '(Ab)using C++17'-AqDsso3S5fg.mp4
@@ -215,7 +222,6 @@
   - pass by ref, generally avoid this, makes code hard to understand, unless it is for avoiding re-allocation
   - move
   - emplace
-
       ```cpp
       vector<string> v;
       auto& s = v.emplace("hello");
@@ -346,7 +352,6 @@
   - deterministic, static code flow, complile time execution as much as possible
   - minimize cache misses and wrong branch predictions
     - warm up. Don't `if` on cache warming
-
     ```cpp
     std::array<size_t, 2> g_total_value{};
     void add_order_value(Order& order) {
@@ -360,7 +365,6 @@
 [D] Core C++ 2021  - - opt-viewer - Inspecting compiler optimizations in high-level code-BJ_yxTmZQbc.mp4
 [E] Correct by Construction - APIs That Are Easy to Use and Hard to Misuse - Matt Godbolt [ C++ on Sea ]-nLSm3Haxz0I.mp4
   - force correct type
-
     ```cpp
     template <typename T> explicit quantity(T quantity) : quantity_(quantity) {
       static_assert(std::is_unsigned_v<T>, "");
@@ -368,7 +372,6 @@
     ```
   - operator""_qty
   - different types for builder, use && ref-qualifier to forcefully eliminate temporates
-
     ```cpp
     struct Step1 {
       [[nodiscard]] Step2 foo() &&;
@@ -405,7 +408,6 @@
     - may_share(const shared_ptr&)
   - using "Pin" using unaliased local copy to solve the reentrancy pitfall
   - for setters
-
   ```cpp
   void set_name(const std::string&);
   void set_name(std::string&&) noexcept;
@@ -1604,6 +1606,8 @@
 [E] Embracing (and also Destroying) Variant Types Safely - Andrei Alexandrescu - CppCon 2021-va9I2qivBOA.mp4
   - ... to the left of a name means "introduce"
   - ... to the right of a patterns "expand"
+[E] Embracing User-Defined Literals Safely - Pablo Halpern - ACCU 2022 [_nW2iB6_BAU].mp4
+  - still don't find this is useful
 [E] Empirically Measuring, & Reducing, C++’s Accidental Complexity - Herb Sutter - CppCon 2020-6lurOCdaj0Y.mp4
   - bad named value seqence: using ehm = integer_seqence<double, 1.5, 3.14>
   - we should have a type sequence: template <typename... Ts> struct type_sequence {};
@@ -1795,12 +1799,14 @@
       ```
   - never delete the move members. OUTDATED?
 [D] Episode #62 (with Sean Parent) 'I’m Surprised You Brought up Rotate'-czHpJE3xIXc.mp4
+[D] Equal Rights for Tests - Jon Jagger - ACCU 2022 [9lXFuf5IN7Q].mp4
 [E] Even More Modern C++-ZQWg1koOKy8.mp4
   - sort performance improvements from C to c++20
 [K] Faster, Easier, Simpler Vectors - David Stone - CppCon 2021-MfFzr9qqPDw.mp4
   - using c array instead of initializer_list
   - begin + size is faster than begin + end pair, but all stl implementations are using the later one for ABI reasons
   - static_vector vs allocator, allocator size/performance overhead, and cannot be trivial
+[D] Fun With Type Erasure - Pavel Novikov - ACCU 2022 [e3GcXIHL8NA].mp4
 [D] Kevlin Henney - Functional C++ [CIg6eyJv4dk].mp4
 [A] Frictionless Allocators - Alisdair Meredith [ ACCU 2021 ]-CQj1WLOUaqw.mp4
 [D] Future of Testing With C++20 - Kris Jusiak [ ACCU 2021 ]-KlU0cb_tbuw.mp4
@@ -2253,6 +2259,8 @@
   - slow coding
   - function_view is hard, because void* and function pointers are not castable
 [D] So You Think You Know How to Work With Concepts - Andrzej Krzemieński - [CppNow 2021]-IUPaAcIk1Us.mp4
+[D] SonarSource - The Power of Clean Code - Geoffray Adde & Olivier Gaudin - ACCU 2022 [IZcKDkW0I94].mp4
+  - memset_s can be used to overwrite sensitive data
 [K] std variant and the power of pattern matching - Nikolai Wuttke - Meeting C++ 2018-CELWr9roNno.mp4
   - space game, state transit
   - event handling
@@ -2290,22 +2298,298 @@
   - CRTP for ops
   - policy on overflow, etc.
 [D] The C++ rvalue Lifetime Disaster - Arno Schoedl [ ACCU 2021 ]-Ubr5wIm4g7c.mp4
-The Complete Guide to `return x;` - Arthur O'Dwyer - [CppNow 2021]-OGKAJD7bmr8.mp4
-The Concepts of concepts - Sandor Dargo - [CppNow 2021]-weJD_ZCr6S8.mp4
-The Forgotten Art of Structured Programming - Kevlin Henney [C++ on Sea 2019]-SFv8Wm2HdNM.mp4
-The Hidden Secrets of Move Semantics - Nicolai Josuttis - CppCon 2020-TFMKjL38xAI.mp4
-The Hitchhiker's Guide to Faster Builds - Viktor Kirilov [C++ on Sea 2019]-anbOy47fBYI.mp4
-The Point Challenge - Returning Different Types for the Same Operation - Amir Kirsh - [ ACCU 2021 ]-wNGEtlBSCLY.mp4
-The Science of Unit Tests - Dave Steffen - CppCon 2020-FjwayiHNI1w.mp4
-The Speed Game - Automated Trading Systems in C++ - Carl Cook - Meeting C++ 2016-ulOLGX3HNCI.mp4
+[D] The Complete Guide to `return x;` - Arthur O'Dwyer - [CppNow 2021]-OGKAJD7bmr8.mp4
+  - whole history and lots of examples
+[A] The Concepts of concepts - Sandor Dargo - [CppNow 2021]-weJD_ZCr6S8.mp4
+  - more nice tricks, starts from 30mins
+[D] The Forgotten Art of Structured Programming - Kevlin Henney [C++ on Sea 2019]-SFv8Wm2HdNM.mp4
+[D] The Hidden Secrets of Move Semantics - Nicolai Josuttis - CppCon 2020-TFMKjL38xAI.mp4
+  - returning const value breaks move semantic
+  - for universal reference, T cannot be template parameter
+      ```cpp
+      template <typanem T> struct C {
+        void foo(T&&); // this is not universal reference
+      };
+      ```
+  - full specialization can be universal reference
+      ```cpp
+      template <typename T> struct C {
+        template <typename U> void foo(U&&);
+        template <> void foo(std::string&&); // universal reference
+      };
+      ```
+[E] The Hitchhiker's Guide to Faster Builds - Viktor Kirilov [C++ on Sea 2019]-anbOy47fBYI.mp4
+  - many tools to check
+  - use debug build
+  - specific includes is better than `#include "everything.h"`
+      ```
+      find_program(iwyu_path NAMES incude-what-you-use iwyu)
+      set_property(TARGET hello PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path})
+      ```
+  - move function definions out of headers
+    - use LTO for inlining(or unity build)
+  - fwd decl used by value in signature is ok
+      ```cpp
+      struct foo;
+      foo f(foo); // OK
+      ```
+  - dedicated headers with forward declarations, like `<iosfwd>` for I/O streams
+  - PIMPL, helps with preserving ABI as well
+  - PCH
+    - gcc/clang: "-x c++-header"
+  - unity builds
+    - only way to catch ORD violations
+    - may have clashes of symbols in anonymous namespaces
+    - may have overload ambiguities
+    - may have miscompilatoin, good tests can help
+  - template argument independent code
+      ```cpp
+      // from
+      template <typename T> class my_vector {
+        int m_size;
+      public:
+        int size() const { return m_size; }
+      };
+
+      // to
+      class my_class_base {
+      protected:
+        int m_size;
+      public:
+        int size() const { return m_size; }
+      };
+
+      template <typename T>
+      clas my_vector: my_class_base {
+      };
+      ```
+  - c++11 extern template. https://arne-mertz.de/2019/02/extern-template-reduce-compile-times/
+      ```cpp
+      /* interface.h */
+      #include <vector>
+      template <typename T> T identity(T in) { return in; }
+
+      /* somewhere.cpp */
+      #include "interface.h"
+
+      // do not instantiate these templates here
+      extern template int identity<int>(int);
+      extern template float identity<float>(float);
+
+      extern template class vector<int>;
+
+      // will not instantiate
+      auto g_int = identity(5);
+      auto g_float = identity(15.f);
+      std::vector<int> a;
+
+      // will instantiate for bool
+      auto g_unsigned = identity(true);
+
+      /* somewhere_else.cpp */
+
+      // instantiation for float
+      template float identity<float>(float);
+      // instantiation for std::vector<int>
+      template class std::vector<int>;
+
+      // instantiation for identity<int>()
+      auto g_int_2 = identity(1);
+      ```
+  - move template functions out of headers
+      ```cpp
+      /* interface.h */
+
+      // declarations
+      template <typename T> T identity(T in);
+      template <typename T> struct answer {
+        T calculate();
+      };
+
+      /* interface.cpp */
+
+      // definitions
+      template <typename T> T identity(T in) { return in; }
+      template <typename T> T answer<T>::calculate() { return T(42); }
+
+      // explicit instantiations for int/float
+      template int identity<int>(int);
+      tempalte float identity<float>(float);
+
+      // explicit instantiation for int
+      template struct answer<int>;
+
+      /* user.cpp */
+
+      auto g_int = identity(666);
+      auto g_float = identity(0.541f);
+
+      auto g_answer = answer<int>().calculate();
+      ```
+  - reduce binary size
+  - PGO
+[D] The Point Challenge - Returning Different Types for the Same Operation - Amir Kirsh - [ ACCU 2021 ]-wNGEtlBSCLY.mp4
+  - point + point doesn't make sense
+  - (point + point) /2 does, what type should (point + point) be
+  - std::ratio<>
+  - check comment about *affine space*, seems to be great
+[D] The Science of Unit Tests - Dave Steffen - CppCon 2020-FjwayiHNI1w.mp4
+[E] The Speed Game - Automated Trading Systems in C++ - Carl Cook - Meeting C++ 2016-ulOLGX3HNCI.mp4
+  - sw: 1- 10us, hw: 100- 1000ns
+  - characteristics of automated trading systems
+    - only a few lines of code in the entrie system are important
+    - these lines are not exercised often
+    - lots of market data envents, millions of events per seconds
+    - jitter is a killy
+    - very little threading/instruction vectorisation/etc
+    - no mistakes, one second is 4 billion instructions
+  - role of c++ in trading systems
+    1. network
+    2. server hardware
+    3. kernel tuning
+    4. c++
+    5. algos, not secret or complicated, in every trading textbook
+  - c++ better inlining: qsort vs sort, 200us vs 72us, SD 7us vs 1.5us
+  - faster, typesafe and simple logging
+    - no parsing, just write to memory in hotpath
+        ```cpp
+        #define LOG(formatString, ...) \
+          static_assert(CountPlaceholders(formatString) == sizeof_args(__VA_ARGS__), "Number of arguments mismatch"); \
+          WriteLog(formatString, ##__VA_ARGS__);
+        
+        constexpr size_t CountPlaceholders(const char* formatString) {
+          size_t result{0};
+          while (formatString[0] != '\0') {
+            result += (formatString[0] == '%') ? 1U : 0U;
+            formatString++;
+          }
+          return result;
+        }
+        
+        template <typename... Types>
+        constexpr unsigned sizeof_args(Types&&...) {
+          return sizeof...(Types);
+        }
+
+        template <typename... Args>
+        static void WriteLog(const char* formatString, const Args&... args) {
+          // calculate space needed in buffer, then get the buffer, then store the format string, and pointer to static
+          // object that knows how to format these arguments
+          char* argsBuffer = /* minor details */
+
+          // copy args in the buffer
+          CopyArgs(argsBuffer, args...);
+        }
+
+        // write a single arg to the buffer and continue with the tail
+        template <typename Args, typename ...Args>
+        static char* CopyArgs(char* argsData, const Arg& arg, const Args&... args) {
+          argsData = CopyArg(argsData, arg);
+          return CopyArgs(argsData, args...);
+        }
+
+        // base case (terminator)
+        inline char* CopyArgs(char* argsData) { return argsData; }
+
+        // specialisatioin of CopyArg for trivially copyable types
+        template <typename T>
+        static char* CopyArg(char* argsData, T arg) {
+          static_assert(std::is_trivially_copable<T>::value, "trivially-copyable types only");
+          *reinterpret_cast<T*>(argsData) = arg;
+          return argsData + sizeof(arg);
+        }
+
+        // https://github.com/maciekgajewski/Fast-Log
+        // https://github.com/calcook/variadicLogging
+        ```
+  - unthrown exceptons don't appear to have a measurable cost
+  - for the non-exceptional flow, it's just evaluating a conditional jump
+  - keep slow path code away from the hot path
+      ```cpp
+      if (ok) {
+        // hot path
+      } else {
+        // lots of lines error handling code
+      }
+
+      // all those code from cold path should be exacted
+      if (ok) {
+        // hot path
+      } else {
+        HandleError();
+      }
+
+      // and considering make HandleError() `__attribute__((noinline))`
+      ```
+[D] The Worst Best Practices - Jason Turner - [CppNow 2021] [KeI03tv9EKE].mp4
+  - his own journey about c++
 [E] The Worst Programming Language Ever - Mark Rendle - NDC Oslo 2021-vcFBwt1nu2U.mp4
-The hidden rules of world-class C++ code - Boris Schäling - Meeting C++ 2017-fu6N6JbPOrI.mp4
-The lazy programmer's guide to writing thousands of tests - Scott Wlaschin-IYzDFHx6QPY.mp4
-Things that Matter - Scott Meyers _ DConf2017-RT46MpK39rQ.mp4
-This Videogame Developer Used the STL and You'll Never Guess What Happened - Mathieu Ropert - ACCU21-xoEUO9DezV8.mp4
-Threads Considered Harmful - Lucian Radu Teodorescu [ ACCU 2021 ]-_T1XjxXNSCs.mp4
+[A] The hidden rules of world-class C++ code - Boris Schäling - Meeting C++ 2017-fu6N6JbPOrI.mp4
+  - boost type eraser, starts from 35mins, for common interface, used like detection or concept
+[E] The lazy programmer's guide to writing thousands of tests - Scott Wlaschin-IYzDFHx6QPY.mp4
+  - property testing with QuickCheck
+      ```
+      # commutativity
+      let r1 = add(x, y)
+      let r2 = add(y, x)
+      assert(r1 == r2)
+
+      # associativity
+      let r1 = add(add(x, 1), 1)
+      let r2 = add(x, 2)
+      assert(r1 == r2)
+
+      # identity
+      let r1 = add(x, 0)
+      assert(r1 == 0)
+      ```
+[E] Things I Learnt While Trying to Avoid Becoming a CMake Expert - CB Bailey - ACCU 2022 [852VSXFaDO0].mp4
+  - basic stuff and best practices
+[E] Things that Matter - Scott Meyers _ DConf2017-RT46MpK39rQ.mp4
+[D] This Videogame Developer Used the STL and You'll Never Guess What Happened - Mathieu Ropert - ACCU21-xoEUO9DezV8.mp4
+  - 1994, 486 starts not to execute instructions in sequentially
+[T] Threads Considered Harmful - Lucian Radu Teodorescu [ ACCU 2021 ]-_T1XjxXNSCs.mp4
 [D] Timur Doumler - How C++20 changes the way we write code - Meeting C++ 2020-VK-16tpFQVI.mp4
-Timur Doumler - Type punning in modern C++-Nn7zugKc32Q.mp4
+[E] Timur Doumler - Type punning in modern C++-Nn7zugKc32Q.mp4
+    ```cpp
+    // before c++ 20 std::bit_cast
+    template <typename To, typename From,
+              typename = std::enable_if_t<
+                  (sizeof(To) == sizeof(From)) &&
+                  std::is_trivially_copable_v<From> &&
+                  std::is_trivially_copable_v<To>>>
+    To bit_cast(const From& src) noexcept {
+      To dst;
+      std::memcpy(&dst, &src, sizeof(To));
+      return dst;
+    }
+    ```
+  1. aliasing rules
+  2. object lifetime rules
+    - an object is created by
+      1. a definition
+      2. a new-expression
+      3. when implicitly changing the active member of a union
+      4. or when a temporary object is created
+  3. alignment rules
+  4. rules for valid value representations
+    - "If there is no value of type To corresponding to the value representation produced, the behavior is undefined"
+  - c++20 malloc starts lifetime
+  - c++23 std::start_lifetime_as replaces reinterpret_cast from char to object
+  - Beware of reinterpret_cast<char*>(&obj), it is to one char, not a char array. may or may not be ok, not clear, Chandler said it is ok
+  - two objects are _pointer-interconveritible_
+      ```cpp
+      struct Widget {
+        int i = 42;
+        float f = 0;
+      };
+
+      int main() {
+        Widget w;
+        int i = *reinterpret_cast<int*>(&w); // ok
+        return i;
+      }
+      ```
 [E] Tobias Hieta - Compiling C++ is slow - let's go faster-X4pyOtawqjg.mp4
   - 1h45m to 36m
   - ninja for incrementable build, marginly for full build
@@ -2435,26 +2719,90 @@ Timur Doumler - Type punning in modern C++-Nn7zugKc32Q.mp4
 [D] [MUC++] Sándor Dargó - Strongly typed containers-QXE43Zqr_WM.mp4
 [D] [MUC++] Timur Doumler - Real-time Programming with the C++ Standard Library-G3qOKiPf1WQ.mp4
 [E] [noise filtered] Optimizing Generic Algorithms - Denis Yaroshevskiy - Meeting C++ 2019-10MQW-aJU3g.mp4
- - same code, but 4.2x performance difference due to code alignment
-code - -dive 2016 conference – Chandler Carruth – Making C++ easier, faster and safer (part 1)-cX_GhJ6BuWI.mp4
-code - -dive 2016 conference – Chandler Carruth – Panel-style extended Q&A _ AmA-430o2HMODj4.mp4
-code - -dive 2016 conference – Chandler Carruth –Making C++ easier, faster, safer (part 2)-E36BUcTWo50.mp4
-code - -dive 2016 conference – Kevlin Henney – Clean Coders Hate (…) When You Use These (…) Tricks-brfqm9k6qzc.mp4
-code - -dive 2016 conference – Sean Parent – Better Code-cK_kftBNgBc.mp4
-code - -dive 2017 – Mateusz Pusz – Striving for ultimate low latency-vzDl0Q91MrM.mp4
-code - -dive 2017 – Odin Holmes – The fastest template metaprogramming in the West-ZpVPexZHYrQ.mp4
-code - -dive conference 2014 - Scott Meyers - Cpu Caches and Why You Care-WDIkqP4JbkE.mp4
-itCppCon21 Welcome (Marco Arena) + KEYNOTE 'WARNING - std - -find is broken' (Sean Parent)-NO5wHzI_oug.mp4
-[T] std - -jthread - I Told You Concurrency Is Tricky - Nico Josuttis [ ACCU 2021 ]-ln5ERAVXEMY.mp4
-x86 Internals for Fun & Profit • Matt Godbolt • GOTO 2014 [hgcNM-6wr34].mp4
+  - same code, but 4.2x performance difference due to code alignment
+[D] code - -dive 2016 conference – Chandler Carruth – Making C++ easier, faster and safer (part 1)-cX_GhJ6BuWI.mp4
+  - clang-tidy and clang-format
+[D] code - -dive 2016 conference – Chandler Carruth – Panel-style extended Q&A _ AmA-430o2HMODj4.mp4
+[D] code - -dive 2016 conference – Chandler Carruth –Making C++ easier, faster, safer (part 2)-E36BUcTWo50.mp4
+  - sanitiers, fuzzer
+[D] code - -dive 2016 conference – Kevlin Henney – Clean Coders Hate (…) When You Use These (…) Tricks-brfqm9k6qzc.mp4
+[D] code - -dive 2016 conference – Sean Parent – Better Code-cK_kftBNgBc.mp4
+[E] code - -dive 2017 – Mateusz Pusz – Striving for ultimate low latency-vzDl0Q91MrM.mp4
+  - sw vs hw: 1- 10us vs 100- 1000ns
+  - low latency network, modern hardware, BIOS profiling, kernel profiling, OS profiling, then c++
+  - SPIN
+    - don't sleep
+    - don't context switch
+    - prefer single-threaded scheduling
+    - disable locking and thread support
+    - disable power management
+    - disable C-states
+    - disable interrupt coalescing
+  - PIN
+    - assign CPU affinity
+    - assign interrupt affinity
+    - assign memory to NUMA nodes
+    - consider the physical location of NICs
+    - isolate cores from general OS use
+    - use a system with a single physical CPU
+  - DROP-IN
+    - choose NIC vendors based on performance and availability of drop-in kernel bypass libraries
+    - use the kernel bypass library
+  - fast path has to start and finish as soon as possible, has predicatable and reproducible performance (low jitter)
+  - google code base is not thread safe
+  - use CRTP to replace inheritance. Java perf cannot be as good as c++
+  - no dynamic allocation
+      ```cpp
+      template<std::size_t MaxSize>
+      class inplace_string {
+        std::array<value_type, MaxSize + 1> chars_;
+      public:
+        // string-like interface
+      };
+      ```
+  - compile-time branching
+      ```cpp
+      enum class side { BID, ASK };
 
-Rafal Dittwald, “Data Oriented Programming” [8Kc55qOgGps].mp4
-Things I Learnt While Trying to Avoid Becoming a CMake Expert - CB Bailey - ACCU 2022 [852VSXFaDO0].mp4
-C++20 Concepts - Andreas Fertig - ACCU 2022 [XOMv4VilN50].mp4
-SonarSource - The Power of Clean Code - Geoffray Adde & Olivier Gaudin - ACCU 2022 [IZcKDkW0I94].mp4
-A lock-free std - -atomic std - -shared_ptr - Timur Doumler - ACCU 2022 [a10JpqI-CvU].mp4
-A Friendly Introduction to Rust for C++ Developers - Hendrik Niemeyer - ACCU 2022 [o-k3xgV0oBE].mp4
-Embracing User-Defined Literals Safely - Pablo Halpern - ACCU 2022 [_nW2iB6_BAU].mp4
-The Worst Best Practices - Jason Turner - [CppNow 2021] [KeI03tv9EKE].mp4
-C++20 - The Small Pearls - Rainer Grimm - ACCU 2022 [OLRXMgXtprQ].mp4
-Equal Rights for Tests - Jon Jagger - ACCU 2022 [9lXFuf5IN7Q].mp4
+      class order_book {
+        template <side S> class book_side {
+          using compare = std::conditional_t<S==side::BID, std::greater<>, std::less<>>;
+          std::vector<price> levels_;
+        public:
+          void insert(order o) {
+            const auto it = lower_bound(begin(levels_), end(levels_), o.price, compare());
+            if (it != end(levels) && *it != o.price)
+              levels_.insert(it, o.price);
+          }
+          bool match(price p) const {
+            return compare()(levels_.back(), p);
+          }
+        };
+      };
+
+      book_side<side::BID> bids_;
+      book_side<side::ASK> asks_;
+      ```
+  - divide the code to hot and cold paths, google vector example, split cold code to one separate function improves performance 1:10:20, 20% faster
+  - consider using tsl::hopscotch_map
+  - free list or plf::colony for preallocate storage
+  - how to develop system with low-latency constraints
+    - keep the _number of threads_ close(less or equal) to the number of available _physical CPU cores_
+    - _Separate_ IO threads from business logic threads (unless business logic is extremely lightweight)
+    - use fixed size _lock free queues_/_busy spins_ to pass the
+    - use optimal _algorithms_ / _data structures and _data locality_ principle
+    - _precompute_, use compile time instread of runtime whenever possible
+    - _the simpiler the code, the faster it is likely to be_
+    - Do not try to be smarter than the compiler
+    - Know the _language_, _tools_ and _libraries_
+    - Know your _hardware_
+    - _Bypass the kernel_ (100% user space code)
+    - **Measure** performance... ALWAYS
+[E] code - -dive 2017 – Odin Holmes – The fastest template metaprogramming in the West-ZpVPexZHYrQ.mp4
+  - some really advanced template programming tricks
+[E] code - -dive conference 2014 - Scott Meyers - Cpu Caches and Why You Care-WDIkqP4JbkE.mp4
+[D] itCppCon21 Welcome (Marco Arena) + KEYNOTE 'WARNING - std - -find is broken' (Sean Parent)-NO5wHzI_oug.mp4
+  - Unary Predicate cannot be stateful
+  - unsigned can be faster than signed integer
+[T] std - -jthread - I Told You Concurrency Is Tricky - Nico Josuttis [ ACCU 2021 ]-ln5ERAVXEMY.mp4
+[D] x86 Internals for Fun & Profit • Matt Godbolt • GOTO 2014 [hgcNM-6wr34].mp4
