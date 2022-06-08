@@ -13,11 +13,11 @@ $ conan profile update settings.compiler.libcxx=libstdc++11 default  # Sets libc
 
 ## search
 
-`conan search poco -r conan-center`
+`conan search poco -r conancenter`
 
 ## inspect
 
-`conan insepct poco/1.9.4 [-r conan-center]`
+`conan inspect poco/1.9.4 [-r conan-center]`
 
 ### basic conanfile.txt and cmake
 ```
@@ -42,7 +42,7 @@ target_link_libraries(md5 ${CONAN_LIBS})
 
 ## existing packages `conan search "*"`
 
-## project's denendencies `conan info .`, in graph `conan info . --graph=file.html`
+## project's dependencies `conan info .`, in graph `conan info . --graph=file.html`
 
 ## options `conan inspect poco/1.9.4 -a=options` / `conan inspect poco/1.9.4 -a=default_options`
 
@@ -59,7 +59,7 @@ or `conan install .. -o poco:shared=True -o openssl:shared=True` or `conan insta
 
 ```
 [imports]
-bin, *.dll -> ./bin # copyies all dll files from packages bin folder to my "bin" folder
+bin, *.dll -> ./bin # copies all dll files from packages bin folder to my "bin" folder
 ```
 
 ## multi configurations
