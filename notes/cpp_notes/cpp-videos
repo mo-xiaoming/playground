@@ -26,6 +26,7 @@
   - atomic<shared_ptr> is not lock free, correct his mistake on _CppCon 2015: Timur Doumler "C++ in the Audio Industry"_
   - correct his another mistake on _Lock-free programming wiht modern C++ - Timur Doumler [ACCU 2017]_
 [D] A refresher on the floating-point computations and the standard library. - Boguslaw Cyganek-7aZbYJ5UTC8.mp4
+[A] Advanced Dependencies Model in Conan 2.0 C, C++ Package Manager - Diego Rodriguez-Losada - ACCU 2022 [kKGglzm5ous].mp4
 [T] Adventures in SIMD-Thinking (part 1 of 2) - Bob Steagall - CppCon 2020-qejTqnxQRcw.mp4
 [T] Adventures in SIMD-Thinking (part 2 of 2) - Bob Steagall - CppCon 2020-qXleSwCCEvY.mp4
 [K] Algorithmic and microarchitecture optimizations of C++ applications - Alexander Maslennikov C++onSea-QLHQhzy1W4Y.mp4
@@ -2665,6 +2666,7 @@
     - that's 20 ints for 8 slots
   - align data for SSE vectorization
 [E] What is an ABI, and Why is Breaking it Bad - Marshall Clow - CppCon 2020-7RoTDjLLXJQ.mp4
+[D] When Should You Give Two Things the Same Name - Arthur O'Dwyer - [CppNow 2021] [OQgFEkgKx2s].mp4
 [E] Why C++ Sails When the Vasa Sank [ltCgzYcpFUI].mp4
   - compatible with C
   - single most importand features: Destructors. Then templates and overloading. A language for library writers
