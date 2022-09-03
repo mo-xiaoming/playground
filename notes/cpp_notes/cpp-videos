@@ -1874,6 +1874,28 @@
 [K] How It's Done - Sorting Algorithms – Karol Przybylski – code - -dive 2021-7T7Yx99lbN4.mp4
   - qsort and related ones, why std::sort is better
 [D] How Profile-Guided Optimization Makes Your Code Faster Without Any Code Changes - Stephan Dollberg-3RtMMHkVsDg.mp4
+[E] How to 'OO' in C++ - Mike Spertus - CppNorth 2022 [W4RsqQysvww].mp4
+  - inheritence hurts compiler/tooling' understanding of your tools
+      ```cpp
+      template <typename T>
+      concept Animal = requries(T a) {
+        { a.eats() } -> convertible_to<string>;
+        { a.name() } -> convertible_to<string>;
+      };
+
+      struct Cat {
+        string eats();
+        string name();
+      };
+
+      int main() {
+        Animal auto a = Cat();
+        cout << "A " << a.name() << " eats " << a.eats();
+      }
+      ```
+  - concepts has problems,
+    - weakens types safety, Pacman is not an animal but eats and has a name
+    - `unique_ptr<Animal auto>` and `set<Animal auto>` is illegal with concepts
 [E] Hypercritical C++ Code Review - Yuri Minaev [ C++ on Sea ]-f1_Iwh33f9I.mp4
   - be aware of char type pointers, type aliasing slows everything down. vector<int> is faster than vector<uint8_t>. range base loop solves this
   - memset to zero out local memory may not work
@@ -1930,6 +1952,10 @@
   - don't return const non-ref value
   - using user defined `throw_logic_err()` to throw exception instead of explicitly calling `throw` may help optimization, because of smaller function size, which helps inlining
 [D] KEYNOTE - What Everyone Should Know About How Amazing Compilers Are - Matt Godbolt [C++ on Sea 2019]-w0sz5WbS5AM.mp4
+[E] Keynote - A Future of Value Semantics and Generic Programming Part 1 - Dave Abrahams - CppNow 2022 [4Ri8bly-dJs].mp4
+  - good program language design ideas
+[E] Keynote - A Future of Value Semantics and Generic Programming Part 2 - Dave Abrahams - CppNow 2022 [GsxYnEAZoNI].mp4
+  - good swift implementations
 [D] Klaus Iglberger - Breaking Dependencies - Type Erasure - A Design Analysis-7GIz9SmRgyc.mp4
 [D] Kris Jusiak - Online AVR_Arduino Developement with C++20 - Meeting Embedded 2020-MskKTIdW45c.mp4
   - sml lib
@@ -2457,7 +2483,7 @@
         #define LOG(formatString, ...) \
           static_assert(CountPlaceholders(formatString) == sizeof_args(__VA_ARGS__), "Number of arguments mismatch"); \
           WriteLog(formatString, ##__VA_ARGS__);
-        
+
         constexpr size_t CountPlaceholders(const char* formatString) {
           size_t result{0};
           while (formatString[0] != '\0') {
@@ -2466,7 +2492,7 @@
           }
           return result;
         }
-        
+
         template <typename... Types>
         constexpr unsigned sizeof_args(Types&&...) {
           return sizeof...(Types);
@@ -2522,6 +2548,8 @@
 
       // and considering make HandleError() `__attribute__((noinline))`
       ```
+[E] The Twin Algorithms - Conor Hoekstra - CppNorth 2022 [w37XnvIf6qE].mp4
+  - APL and <numeric>
 [D] The Worst Best Practices - Jason Turner - [CppNow 2021] [KeI03tv9EKE].mp4
   - his own journey about c++
 [E] The Worst Programming Language Ever - Mark Rendle - NDC Oslo 2021-vcFBwt1nu2U.mp4
