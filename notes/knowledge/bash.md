@@ -11,7 +11,7 @@ set -euo pipeline # on every bash script
 
 `^X Backspace` removes all text from the cursor to the beginning of the line
 
-`^T` transpose the charactor before the cursor with the charactor under the cursor
+`^T` transpose the character before the cursor with the character under the cursor
 
 `ALT T` transposes the two words immediately before (or under) the cursor
 

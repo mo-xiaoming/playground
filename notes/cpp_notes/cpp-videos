@@ -1956,11 +1956,37 @@
   - good program language design ideas
 [E] Keynote - A Future of Value Semantics and Generic Programming Part 2 - Dave Abrahams - CppNow 2022 [GsxYnEAZoNI].mp4
   - good swift implementations
+[E] Keynote - The Tragedy of C++, Acts One & Two - Sean Parent - CppNorth 2022 [kZCPURMH744].mp4
+  - about 20 people in our industry can use primitives such as mutex well
+  - history of google asking him to put ps size app inside browser, but turned him to trivial things instead
+  - "60% of your time should be spending on improving your code base, instead of adding new features"
+  - However, time pressure to put product onto the market, faster than competitors
 [D] Klaus Iglberger - Breaking Dependencies - Type Erasure - A Design Analysis-7GIz9SmRgyc.mp4
 [D] Kris Jusiak - Online AVR_Arduino Developement with C++20 - Meeting Embedded 2020-MskKTIdW45c.mp4
   - sml lib
 [D] Lambdas - uses and abuses - Dawid Zalweski - Meeting C++ 2020-Onv9w6FGwIQ.mp4
   - recursive lambda -> y-combinator
+[T] Lightning Talk - A Spinlock Implementation - Fedor Pikus - CppNow 2022 [rmGJc9PXpuE].mp4
+    ```cpp
+    #include <atomic>
+    #include <time.h>
+
+    struct spinlock {
+      spinlock() : flag_(0) {}
+      void lock() {
+        static const timespec ns = {0, 1};
+        for (int i = 0; flag_.load(std::memory_order_relaxed) || flag_.exchange(1, std::memory_order_acquire); ++i) {
+          if (i == 8) {
+            i = 0;
+            nanosleep(&ns, NULL);
+          }
+        }
+      }
+      void unlock() { flag_.store(0, std::memory_order_release); }
+    private:
+      std::atomic<unsigned int> flag_;
+    };
+    ```
 [E] Lightning Talk - C++ is like Javascript - Patricia Aas [C++ on Sea 2019]-L5C4OmD79ac.mp4
 [E] Lightning Talk - So You Thought C++ Was Weird Meet Enums - Roth Michaels - CppCon 2021-SGfk5l85cko.mp4
   - enums are just named numbers
@@ -2282,6 +2308,27 @@
   - there is a "same" talk
   - no raw synchronization primitives
   - how he got a job in apple, by not being afraid to approach other seniors
+[E] Six Ways for Implementing max - Amir Kirsh - C++ on Sea 2022 [yRnYlBJq6sM].mp4
+    ```cpp
+    template <typename T1, typename T2>
+    struct return_type {
+      using type = std::common_type_t<std::remove_cvref_t<T1>, std::remove_cvref_t<T2>>;
+    };
+
+    template <typename T1, typename T2>
+      requires std::is_lvalue_reference_v<T1> && std::is_lvalue_reference_v<T2> && std::same_as<std::remove_cvref_t<T1>, std::remove_cvref_t<T2>>
+    struct return_type<T1, T2> {
+      using type = const std::common_type_t<std::remove_cvref_t<T1>, std::remove_cvref_t<T2>>&;
+    };
+
+    template <typename T1, typename T2>
+    return_type<T1, T2>::type my_max(T1&& a, T2&& b) {
+      if (a < b) {
+        return b;
+      }
+      return a;
+    }
+    ```
 [E] Slow Coding - Ben Deane; A View to a Thing - Jason Turner - 2020-10-11-lDZmXpsKtVA.mp4
   - slow coding
   - function_view is hard, because void* and function pointers are not castable
@@ -2694,6 +2741,14 @@
     - that's 20 ints for 8 slots
   - align data for SSE vectorization
 [E] What is an ABI, and Why is Breaking it Bad - Marshall Clow - CppCon 2020-7RoTDjLLXJQ.mp4
+[E] What Do You Mean by 'Cache Friendly' - Björn Fahller - C++ on Sea 2022 [yyNWKHoDtMs].mp4
+  - list -> linear array -> sorted array -> map -> heap(priority_queue) -> bheap
+  - valgrind --tool=callgrind --cache-sim=yes --dump-instr=yes --branch-sim=yes
+  - "kalgrind" to open valgrind data
+  - perf stat -e cycles,instructions,L1-dcache-loads,L1-dcaches-load-misses
+  - perf record -e cycles,instructions,L1-dcache-loads,L1-dcache-misses --call-graph=dward
+  - "hotspot" for openning perf.data, not so good
+  - why dcache misses can be over 100%: speculative execution
 [D] When Should You Give Two Things the Same Name - Arthur O'Dwyer - [CppNow 2021] [OQgFEkgKx2s].mp4
 [E] Why C++ Sails When the Vasa Sank [ltCgzYcpFUI].mp4
   - compatible with C
