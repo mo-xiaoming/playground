@@ -2348,6 +2348,8 @@
   - strong lambdas/generic types and much more
   - https://github.com/JoBoccara/NamedType
 [E] Structure and Interpretation of Test Cases - Kevlin Henney [ C++ on Sea 2020 ]-RX6WvaxmIyY.mp4
+[E] Taking a Byte Out of C++ - Avoiding Punning by Starting Lifetimes - Robert Leahy - CppCon 2022 [pbkQG09grFw].mp4
+  - malloc is wrong, fixed in c++20
 [A] Taming Dynamic Memory - An Introduction to Custom Allocators - Andreas Weis [ACCU 2019]-IGtKstxNe14.mp4
 [D] Template Metaprogramming - Type Traits (part 1 of 2) - Jody Hagins - CppCon 2020-tiAVWcjIF6o.mp4
   - "For any given type T, the result of applying one of these templates to T and to cv T shall yield the same result."
@@ -2711,6 +2713,46 @@
       }
       ```
   - compare different strong type libs
+[E] Typical C++, But Why？ - Björn Fahller - NDC TechTown 2022 [PmVmaT1JNbw].mp4
+  - string types everywhere
+  - why string as type is bad
+  - why default parameters are bad
+      ```cpp
+      template <typename T> struct must_init {
+        must_init(T t): value(std::move(t)) {}
+        operator T&() { return value; }
+        operator const T&() { return value; }
+      };
+
+      struct server_socket {
+        struct config {
+          must_init<uint16_t> port;
+          bool tcp = true;
+          //...
+        };
+        explicit server_socket(config);
+      };
+
+      int main() {
+        server_socket socket({
+            .port = 80,
+        });
+      }
+      ```
+  - do not use integer as id, may id for different types might cause bugs
+      ```cpp
+      enum class client_id: int {};
+      enum class server_id: int {};
+
+      struct control {
+        void close_server(server_id id) {
+          m_client_sesion.erase(id); // won't compile
+        }
+      private:
+        std::map<client_id, session> m_client_session;
+        std::map<server_id, session> m_server_session;
+      };
+      ```
 [D] Undefined Behavior is Not an Error - Barbara Geller, Ansel Sermersheim - code - -dive 2019-x-ZDZ1CcP3k.mp4
 [E] Understanding Compiler Optimization - Chandler Carruth - Opening Keynote Meeting C++ 2015-FnGCDLhaxKU.mp4
   - inlining is the single most important optimization in modern compilers
