@@ -2141,6 +2141,8 @@
   # 0.14 stalled cycles per insn # waiting 0.14 cycles for memory
   ```
   - boost::mapped_file
+[K] Optimizing A String Class for Computer Graphics in Cpp - Zander Majercik,  Morgan McGuire  CppCon 22 [fglXeSWGVDc].mp4
+  - nice trick for using `etext` and `edata` to detect const string
 [E] Pacific++ 2017 - Jason Turner 'Rethinking Exceptions'-OkgvqjJzH_Y.mp4
   - why not exceptions?
     - can bloat binary size, which affects cache utilization
@@ -2714,6 +2716,7 @@
       ```
   - compare different strong type libs
 [E] Typical C++, But Why？ - Björn Fahller - NDC TechTown 2022 [PmVmaT1JNbw].mp4
+  - "no one knows the rules of overload resolution"
   - string types everywhere
   - why string as type is bad
   - why default parameters are bad
@@ -2782,6 +2785,8 @@
     - so each int only can go one slot of each set
     - that's 20 ints for 8 slots
   - align data for SSE vectorization
+[E] What Can Compiler Benchmarks Reveal About Metaprogramming Implementation Strategies  Vincent Reverdy [9bSG1aHXU60].mp4
+  - lots of tuple related and other meta template programming tips
 [E] What is an ABI, and Why is Breaking it Bad - Marshall Clow - CppCon 2020-7RoTDjLLXJQ.mp4
 [E] What Do You Mean by 'Cache Friendly' - Björn Fahller - C++ on Sea 2022 [yyNWKHoDtMs].mp4
   - list -> linear array -> sorted array -> map -> heap(priority_queue) -> bheap
@@ -2845,6 +2850,9 @@
 [D] [MUC++] Phil Nash - 'Test Driven C++' (Part 2)-OZFhRjzaC0o.mp4
 [D] [MUC++] Sándor Dargó - Strongly typed containers-QXE43Zqr_WM.mp4
 [D] [MUC++] Timur Doumler - Real-time Programming with the C++ Standard Library-G3qOKiPf1WQ.mp4
+[K] [MUC++] Timur Doumler - What is Low Latency C++？ [NrrG2TYF1dM].mp4
+  - new in c++2x
+  - `~X() {}` is bad, non-trivial destructor == can't be passed in a register (Itanium ABI)
 [E] [noise filtered] Optimizing Generic Algorithms - Denis Yaroshevskiy - Meeting C++ 2019-10MQW-aJU3g.mp4
   - same code, but 4.2x performance difference due to code alignment
 [D] code - -dive 2016 conference – Chandler Carruth – Making C++ easier, faster and safer (part 1)-cX_GhJ6BuWI.mp4

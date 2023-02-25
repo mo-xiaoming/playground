@@ -122,12 +122,15 @@ constexpr bool is_void_v = is_void<T>::value;
 static_assert(is_void_v<void>);
 static_assert(is_void_v<void const>);
 
+// declaration
 template <typename T, typename ... P0toN>
 struct is_one_of : false_type {};
 
+// termination
 template <typename T>
 struct is_one_of<T> : false_type {};
 
+// recursion
 template <typename T, typename U, typename ... P1toN>
 struct is_one_of<T, U, P1toN...> : conditional_t<is_same_v<T, U>, true_type, is_one_of<T, P1toN...>> {};
 
@@ -150,8 +153,8 @@ static_assert(is_void0_v<int> == false);
 template <typename T>
 struct is_copy_assignable {
 private:
-    template <typename U, typename = decltype(std::declval<U&>() = std::declval<U const&>())>
-    static true_type try_assign(U&&);
+    template <typename U, typename = decltype(std::declval<T&>() = std::declval<U const&>())>
+    static true_type try_assign(U);
 
     static false_type try_assign(...);
 public:
@@ -195,22 +198,20 @@ struct is_copy_assignable0<T, void_t<copy_assignment_t<T>>> : is_same<copy_assig
 static_assert(is_copy_assignable0<X>::value);
 static_assert(is_copy_assignable0<A>::value == false);
 struct C {
-    C operator=(C const&) {}; // wrong return type
+    C(C const&) {};
+    C operator=(C const&) { return *this; }; // wrong return type
 };
 static_assert(is_copy_assignable0<C>::value == false);
 
-template <typename T, typename ... Ts>
-using front_t = typename front<T, Ts...>::type;
-
-static_assert(is_same_v<front_t<int, bool, double>, int>);
-static_assert(is_same_v<front_t<int>, int>);
-
+// declaration
 template <int N, typename ... Ts>
 struct at;
 
+// termination
 template <typename T, typename ... Ts>
 struct at<0, T, Ts...> { using type = T; };
 
+// recursion
 template <int N, typename T, typename ... Ts>
 struct at<N, T, Ts...> : at<N-1, Ts...> {};
 
@@ -220,6 +221,12 @@ using at_t = typename at<N, Ts...>::type;
 static_assert(is_same_v<at_t<0, int, bool, double>, int>);
 static_assert(is_same_v<at_t<1, int, bool, double>, bool>);
 static_assert(is_same_v<at_t<2, int, bool, double>, double>);
+
+template <typename T, typename ... Ts>
+using front_t = T;
+
+static_assert(is_same_v<front_t<int, bool, double>, int>);
+static_assert(is_same_v<front_t<int>, int>);
 
 template <typename ... Ts>
 struct tail : at<sizeof...(Ts) - 1U, Ts...> {};
@@ -246,7 +253,7 @@ namespace detail {
 }
 
 template <typename T>
-using is_const_v = decltype(detail::is_const(st::decltype<type_is<T>>()));
+using is_const_v = typename decltype(detail::is_const<T>())::value;
 
 template <typename T, typename ...Ts>
 struct hasType {
