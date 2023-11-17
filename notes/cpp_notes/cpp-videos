@@ -103,6 +103,9 @@
   - parser
   - monad for buidling pipe lines, for composing operations within context
   - static exceptions like rust::Result
+[E] C++ And Beyond： Discussion - Vittorio Romeo, Kevlin Henney, Nico Josuttis & Kate Gregory - ACCU 2023 [_AmjHjYUx6c].mp4
+  - Noco Josuttis: C++ is fundamentally broken
+  - Vittorio Romeo: democracy was a mistake
 [K] C++ Class Natures - Peter Sommerlad - Meeting C++ Secret Lightning Talks-I3WC8jXI8ek.mp4
   - value types just work, no virtual
   - assignment operators should be ref qualified by `&` to prevent assigning to a temporary
@@ -159,6 +162,16 @@
 [K] C++ Function Templates - How Do They Really Work - Walter E. Brown [C++ on Sea 2019]-nfIX8yWlByY.mp4
   - no ctors, dtors, assign ops ever arises from template functions
 [D] C++ Russia 2018 -  Andrei Alexandrescu, Expect the expected-CGwk3i1bGQI.mp4
+[E] C++ Standard Views - Nico Josuttis - ACCU 2023 [qv29fo9sUjY].mp4
+  - c++ views is broken!!! It voilates all those rules
+    - you can **iterate** if the range is **const**
+    - a **read iteration** does **not change** state
+    - **concurrent** read **iterations** are safe
+    - **const** collections have **const** elements
+    - **cbegin()** makes elements Immutable
+    - a **copy of a range** has the same state
+    - **const-declared** elements are **const** (c++23)
+  - github belleviews repo
 [E] C++ STL best and worst performance features and how to learn from them - Danila Kutenin [ C++onSea ]-GRuX31P4Ric.mp4
   - outsanding types/containers: array, optional, variant, atomic, span, string_view, <algorithm>
   - debatable types/containers: vector, string, set, map
