@@ -45,6 +45,8 @@
 [D] Arno Lepisk - Testing non-compiling code-02Hu0amx-5Y.mp4
   - script to test exit status, too slow in CI and unreliable
   - static_assert on traits
+[E] Assembly, System Calls, and Hardware in C++ - David Sankel - CppNow 2023 [7xwjjolDnwg].mp4
+  - how to read assembly
 [K] Back to Basics - Algebraic Data Types - Arthur O'Dwyer - CppCon 2020-OJzmWqCCZaM.mp4
   - optional variant pair tuple, usages
 [D] Back to Basics - Casting - Brian Ruth - CppCon 2021-2h2hdRqRIRk.mp4
@@ -1816,6 +1818,10 @@
 [D] Equal Rights for Tests - Jon Jagger - ACCU 2022 [9lXFuf5IN7Q].mp4
 [E] Even More Modern C++-ZQWg1koOKy8.mp4
   - sort performance improvements from C to c++20
+[K] Exceptions in C++： Better Design Through Analysis of Real World Usage - Peter Muldoon - CppNow 2023 [HXJmrMnnDYQ].mp4
+  - frame based: register what to destroy at run-time
+  - table based: do that at compilation
+  - compiler does optimization based on exceptions are rare
 [K] Faster, Easier, Simpler Vectors - David Stone - CppCon 2021-MfFzr9qqPDw.mp4
   - using c array instead of initializer_list
   - begin + size is faster than begin + end pair, but all stl implementations are using the later one for ABI reasons
@@ -2004,6 +2010,8 @@
 [E] Lightning Talk - So You Thought C++ Was Weird Meet Enums - Roth Michaels - CppCon 2021-SGfk5l85cko.mp4
   - enums are just named numbers
   - static_cast<E>(3) is valid for `enum E {A=0, B=1, C=2};`, as long as the underlying type can hold
+[E] Learning Curves - Miro Knejp - CppNorth 2023 [aw7Eb7Jn6LM].f614.mp4
+  - just rewrite it in Rust
 [D] Linux User_Kernel ABI - the realities of how C and C++ programs really talk to the OS - Greg Law-4CdmGxc5BpU.mp4
   - syscalls, /proc and posix APIs
 [E] Live Compiler Development with Cross-Platform Tooling - Sy Brand [ C++ on Sea 2020 ]-Jw2n5QSul34.mp4
